@@ -1,4 +1,4 @@
-import React, { useRef, useState, ReactNode } from "react";
+import React, { useRef, useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
 
 interface MagneticProps {

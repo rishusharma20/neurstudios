@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import Lenis from 'lenis';
 import { Navigation } from './components/ui/Navigation';
 import { Hero } from './components/sections/Hero';

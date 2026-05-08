@@ -1,9 +1,9 @@
-import React from "react";
+ 
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 
 export const PostProcessing = () => {
   return (
-    <EffectComposer disableNormalPass>
+    <EffectComposer>
       <Bloom
         luminanceThreshold={0.2}
         luminanceSmoothing={0.9}

@@ -1,5 +1,5 @@
-import React, { useRef, useEffect } from "react";
-import { ArrowRight, ExternalLink, MonitorPlay } from "lucide-react";
+import { useRef, useEffect } from "react";
+import { ExternalLink, MonitorPlay } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 

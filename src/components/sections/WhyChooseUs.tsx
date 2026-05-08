@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { Card } from '../ui/Card';
 import { CheckCircle2 } from 'lucide-react';

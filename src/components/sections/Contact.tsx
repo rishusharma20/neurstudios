@@ -1,6 +1,5 @@
-import React, { useRef, useEffect, useState } from "react";
-import { Copy, ArrowRight, CheckCircle2, Loader2, PartyPopper } from "lucide-react";
-import { FaGithub, FaLinkedin, FaTwitter, FaInstagram } from "react-icons/fa";
+import { useRef, useEffect, useState } from "react";
+import { ArrowRight, CheckCircle2, Loader2, PartyPopper } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion, AnimatePresence } from "framer-motion";

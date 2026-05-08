@@ -1,16 +1,16 @@
-import React from "react";
+import { forwardRef, type AnchorHTMLAttributes } from "react";
 import { cn } from "../../utils/helpers";
 import { Magnetic } from "./Magnetic";
 import { motion } from "framer-motion";
 
-interface ButtonProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+interface ButtonProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   variant?: "primary" | "secondary";
   className?: string;
   magnetic?: boolean;
   href?: string;
 }
 
-export const Button = React.forwardRef<any, ButtonProps>(
+export const Button = forwardRef<any, ButtonProps>(
   ({ className, variant = "primary", magnetic = true, children, href, ...props }, ref) => {
     const baseStyles = "relative inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium transition-all duration-300 text-sm overflow-hidden cursor-pointer";
     

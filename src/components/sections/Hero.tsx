@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { NeuralNetwork } from "../three/NeuralNetwork";
 import { Button } from "../ui/Button";

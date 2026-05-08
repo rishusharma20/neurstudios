@@ -1,12 +1,24 @@
-import React, { useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Search, Palette, Code2, ShieldCheck, Rocket, CheckCircle2, Clock, Terminal } from "lucide-react";
-import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { motion, useScroll, useSpring } from "framer-motion";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const processSteps = [
+interface ProcessStep {
+  num: string;
+  title: string;
+  tagline: string;
+  description: string;
+  deliverables: string[];
+  timeline: string;
+  icon: any;
+  color: string;
+  visual: string;
+}
+
+const processSteps: ProcessStep[] = [
   {
     num: "01",
     title: "DISCOVER & PLAN",
