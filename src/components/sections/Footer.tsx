@@ -1,6 +1,7 @@
-import React from "react";
+import { Fragment } from "react";
 import { FaGithub, FaLinkedin, FaTwitter, FaInstagram } from "react-icons/fa";
 import { motion } from "framer-motion";
+import logo from "../../assets/logo.png";
 
 export const Footer = () => {
   const navLinks = [
@@ -45,7 +46,7 @@ export const Footer = () => {
           
           <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-6 py-10 border-y border-white/5 bg-white/[0.03] backdrop-blur-md rounded-[2.5rem] relative z-10 px-8">
             {trustMetrics.map((metric, idx) => (
-              <React.Fragment key={idx}>
+              <Fragment key={idx}>
                 <div className="flex items-center gap-4 group cursor-default">
                   <div className="w-2 h-2 rounded-full bg-[var(--color-cyan)] shadow-[0_0_12px_var(--color-cyan)] animate-pulse group-hover:scale-125 transition-transform"></div>
                   <span className="text-[11px] font-mono tracking-[0.25em] uppercase text-white/50 group-hover:text-white transition-colors">
@@ -55,7 +56,7 @@ export const Footer = () => {
                 {idx < trustMetrics.length - 1 && (
                   <div className="hidden xl:block w-[1px] h-6 bg-white/10"></div>
                 )}
-              </React.Fragment>
+              </Fragment>
             ))}
           </div>
         </div>
@@ -72,7 +73,7 @@ export const Footer = () => {
                 <div className="absolute -inset-2 border border-[var(--color-cyan)]/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 
                 <img 
-                  src="/src/assets/logo.png" 
+                  src={logo} 
                   alt="Neur Studios Logo" 
                   className="w-full h-full object-contain relative z-10 transition-all duration-700 group-hover:scale-110 drop-shadow-[0_0_15px_rgba(0,217,255,0.4)]"
                 />

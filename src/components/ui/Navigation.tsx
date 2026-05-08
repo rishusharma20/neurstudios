@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { cn } from "../../utils/helpers";
 import { Button } from "./Button";
 import { motion, AnimatePresence } from "framer-motion";
+import logo from "../../assets/logo.png";
 
 export const Navigation = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -37,7 +38,7 @@ export const Navigation = () => {
             <div className="relative w-10 h-10 flex items-center justify-center">
               <div className="absolute inset-0 bg-[var(--color-cyan)] rounded-full blur-[15px] opacity-0 group-hover:opacity-40 transition-opacity duration-500"></div>
               <img 
-                src="/src/assets/logo.png" 
+                src={logo} 
                 alt="Neur Studios Logo" 
                 className="w-full h-full object-contain relative z-10 transition-transform duration-500 group-hover:scale-110"
               />
