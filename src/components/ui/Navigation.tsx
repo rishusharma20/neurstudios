@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { cn } from "../../utils/helpers";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "../../assets/logo.png";
-import { Menu, X } from "lucide-react";
+import { X } from "lucide-react";
 
 export const Navigation = () => {
   const [scrolled, setScrolled] = useState(false);

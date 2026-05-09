@@ -2,7 +2,6 @@ import { useRef, useEffect } from "react";
 import { ExternalLink, MonitorPlay } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { cn } from "../../utils/helpers";
 
 gsap.registerPlugin(ScrollTrigger);
 

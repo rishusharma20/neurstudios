@@ -2,7 +2,6 @@ import { Fragment } from "react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { motion } from "framer-motion";
 import logo from "../../assets/logo.png";
-import { cn } from "../../utils/helpers";
 
 export const Footer = () => {
   const navLinks = [

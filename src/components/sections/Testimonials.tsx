@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState, useMemo } from "react";
-import { Star, CheckCircle, Quote, Shield, Fingerprint } from "lucide-react";
+import { Shield, Fingerprint } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";

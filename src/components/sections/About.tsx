@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Network, Cuboid, Zap, LayoutTemplate, Layers, MousePointer2 } from "lucide-react";
-import { cn } from "../../utils/helpers";
 
 gsap.registerPlugin(ScrollTrigger);
 

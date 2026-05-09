@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { ArrowRight, CheckCircle2, Loader2, ShieldCheck, Zap, Globe, Cpu, Send, PartyPopper } from "lucide-react";
+import { CheckCircle2, ShieldCheck, Zap, Globe, Cpu, Send, PartyPopper } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion, AnimatePresence, useSpring, useMotionValue } from "framer-motion";
@@ -106,7 +106,6 @@ const InputField = ({ label, type = "text", placeholder, name }: any) => {
 export const Contact = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [formState, setFormState] = useState<"idle" | "submitting" | "success">("idle");
-  const [isSubmitHovered, setIsSubmitHovered] = useState(false);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -274,8 +273,6 @@ export const Contact = () => {
                         <button 
                           type="submit"
                           disabled={formState !== "idle"}
-                          onMouseEnter={() => setIsSubmitHovered(true)}
-                          onMouseLeave={() => setIsSubmitHovered(false)}
                           className={cn(
                             "group relative w-full h-16 sm:h-20 rounded-2xl overflow-hidden transition-all duration-500",
                             formState === "idle" ? "cursor-pointer" : "cursor-wait"

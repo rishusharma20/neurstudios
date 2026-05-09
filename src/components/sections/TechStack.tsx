@@ -23,14 +23,12 @@ const TechIcon = ({
   onHoverStart: () => void;
   onHoverEnd: () => void;
 }) => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    setMousePos({ x, y });
 
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;

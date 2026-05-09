@@ -1,9 +1,8 @@
 import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Search, Palette, Code2, ShieldCheck, Rocket, CheckCircle2, Clock, Terminal } from "lucide-react";
+import { Search, Palette, Code2, ShieldCheck, Rocket, Clock, Terminal } from "lucide-react";
 import { motion, useScroll, useSpring } from "framer-motion";
-import { cn } from "../../utils/helpers";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -173,7 +172,6 @@ export const Process = () => {
             <div className="space-y-16 sm:space-y-24">
               {processSteps.map((step, idx) => {
                 const Icon = step.icon;
-                const isEven = idx % 2 === 0;
 
                 return (
                   <motion.div 
