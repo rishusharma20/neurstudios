@@ -34,42 +34,9 @@ const TechIcon = ({
 
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    const tiltX = (y - centerY) / 8;
-    const tiltY = (centerX - x) / 8;
+    const tiltX = (y - centerY) / 10;
+    const tiltY = (centerX - x) / 10;
     setTilt({ x: tiltX, y: tiltY });
-  };
-
-  const renderIconEffect = () => {
-    if (!isHovered) return null;
-    
-    switch(name) {
-      case "React":
-        return (
-          <motion.div 
-            className="absolute inset-0 border border-cyan-400 rounded-full opacity-40"
-            animate={{ rotate: 360, scale: [1, 1.25, 1] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-          />
-        );
-      case "Next.js":
-        return (
-          <motion.div 
-            className="absolute inset-0 border-t border-white rounded-full opacity-50 shadow-[0_0_15px_rgba(255,255,255,0.4)]"
-            animate={{ rotate: -360 }}
-            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          />
-        );
-      case "Three.js":
-        return (
-          <motion.div 
-            className="absolute inset-0 bg-white/20 blur-md"
-            animate={{ opacity: [0.1, 0.4, 0.1] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          />
-        );
-      default:
-        return null;
-    }
   };
 
   return (
@@ -84,101 +51,72 @@ const TechIcon = ({
           setTilt({ x: 0, y: 0 });
         }}
         onMouseMove={handleMouseMove}
+        onTouchStart={onHoverStart}
         animate={{ 
           rotateX: tilt.x, 
           rotateY: tilt.y,
-          scale: isHovered ? 1.25 : (isAnyHovered ? 0.92 : 1),
-          z: isHovered ? 150 : 0,
-          filter: isAnyHovered && !isHovered ? "brightness(0.5)" : "brightness(1)",
+          scale: isHovered ? 1.2 : (isAnyHovered ? 0.95 : 1),
+          z: isHovered ? 50 : 0,
           opacity: isAnyHovered && !isHovered ? 0.4 : 1
         }}
-        transition={{ type: "spring", stiffness: 400, damping: 20 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
         className={cn(
-          "relative w-16 h-16 md:w-24 md:h-24 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center cursor-pointer overflow-visible group/icon shadow-2xl",
+          "relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center cursor-pointer overflow-visible group/icon shadow-xl",
           isHovered && "border-opacity-100 bg-white/[0.08]"
         )}
         style={{ 
           borderColor: isHovered ? color : "rgba(255,255,255,0.1)",
-          boxShadow: isHovered ? `0 0 40px ${color}44, inset 0 0 15px ${color}22` : "none",
+          boxShadow: isHovered ? `0 0 30px ${color}33` : "none",
           transformStyle: "preserve-3d"
         }}
       >
-        {/* Powered On Energy Aura */}
         <AnimatePresence>
           {isHovered && (
             <motion.div 
               initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1.2 }}
+              animate={{ opacity: 1, scale: 1.1 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              className="absolute inset-[-15%] rounded-full blur-2xl -z-10 pointer-events-none"
-              style={{ background: `radial-gradient(circle, ${color}33 0%, transparent 70%)` }}
+              className="absolute inset-[-10%] rounded-full blur-xl -z-10 pointer-events-none opacity-40"
+              style={{ background: `radial-gradient(circle, ${color}44 0%, transparent 70%)` }}
             />
           )}
         </AnimatePresence>
-
-        {/* Vision Pro Tracking Light */}
-        <div 
-          className="absolute inset-0 pointer-events-none opacity-0 group-hover/icon:opacity-100 transition-opacity duration-200 rounded-2xl overflow-hidden"
-          style={{
-            background: `radial-gradient(circle at ${mousePos.x}px ${mousePos.y}px, ${color}33, transparent 60%)`,
-          }}
-        />
-
-        {/* Shimmer Sweep */}
-        <motion.div 
-          className="absolute inset-0 pointer-events-none opacity-0 group-hover/icon:opacity-30"
-          animate={isHovered ? { x: ["-100%", "200%"] } : {}}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-          style={{ background: "linear-gradient(90deg, transparent, white, transparent)" }}
-        />
-
-        {renderIconEffect()}
 
         <img 
           src={icon} 
           alt={name} 
           className={cn(
-            "w-8 h-8 md:w-12 md:h-12 transition-all duration-500 relative z-10",
+            "w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 transition-all duration-500 relative z-10",
             invert && "invert opacity-90",
-            isHovered ? "drop-shadow-[0_0_15px_" + color + "] brightness-110" : "brightness-90"
+            isHovered ? "drop-shadow-[0_0_10px_" + color + "] brightness-110" : "brightness-75"
           )}
-          style={{ transform: "translateZ(60px)" }}
+          style={{ transform: "translateZ(30px)" }}
         />
         
-        {/* Animated HUD Grid */}
-        <div className="absolute inset-0 opacity-[0.07] pointer-events-none bg-[linear-gradient(rgba(255,255,255,.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.1)_1px,transparent_1px)] bg-[size:12px_12px] rounded-2xl" />
+        <div className="absolute inset-0 opacity-[0.05] pointer-events-none bg-[linear-gradient(rgba(255,255,255,.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.1)_1px,transparent_1px)] bg-[size:10px_10px] rounded-2xl" />
       </motion.div>
 
       <span className={cn(
-        "font-mono text-[10px] md:text-xs tracking-[0.3em] transition-all duration-500 uppercase font-bold",
-        isHovered ? "text-white opacity-100 translate-y-2 brightness-125" : (isAnyHovered ? "opacity-0" : "text-white/30")
+        "font-mono text-[9px] md:text-[10px] tracking-[0.2em] transition-all duration-500 uppercase font-black",
+        isHovered ? "text-white opacity-100 translate-y-1" : (isAnyHovered ? "opacity-0" : "text-white/20")
       )}>
         {name}
       </span>
 
-      {/* Holographic HUD Tooltip */}
       <AnimatePresence>
         {isHovered && (
           <motion.div
-            initial={{ opacity: 0, y: 25, scale: 0.8 }}
+            initial={{ opacity: 0, y: 15, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 25, scale: 0.8 }}
-            className="absolute -top-32 left-1/2 -translate-x-1/2 w-64 z-[110] pointer-events-none"
+            exit={{ opacity: 0, y: 15, scale: 0.9 }}
+            className="absolute -top-24 left-1/2 -translate-x-1/2 w-48 sm:w-56 z-[110] pointer-events-none"
           >
-            <div className="bg-[#08080a] px-6 py-5 rounded-xl border-2 border-cyan-400/60 shadow-[0_0_80px_rgba(0,0,0,1)] relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyan-400" />
-              <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyan-400" />
-              
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-transparent" />
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#00D9FF]" />
-                  <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-[0.3em] font-black">NODE_INFO_ACTIVE</span>
-                </div>
-                <p className="text-[12px] font-mono text-white leading-relaxed text-center uppercase tracking-wider font-black">
-                  {description}
-                </p>
-              </div>
+            <div className="bg-[#08080a]/90 backdrop-blur-xl px-4 py-3 rounded-xl border border-white/10 shadow-2xl relative overflow-hidden text-center">
+              <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/30" />
+              <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/30" />
+              <p className="text-[10px] sm:text-[11px] font-mono text-white leading-relaxed uppercase tracking-wider font-bold">
+                {description}
+              </p>
             </div>
           </motion.div>
         )}
@@ -212,11 +150,11 @@ const CategoryPanel = ({
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!panelRef.current) return;
+    if (!panelRef.current || window.innerWidth < 1024) return;
     const rect = panelRef.current.getBoundingClientRect();
     const x = (e.clientY - rect.top) / rect.height - 0.5;
     const y = (e.clientX - rect.left) / rect.width - 0.5;
-    setRotate({ x: x * -8, y: y * 8 });
+    setRotate({ x: x * -5, y: y * 5 });
   };
 
   const isCurrentPanelActive = techs.find(t => t.name === activeTech);
@@ -229,31 +167,29 @@ const CategoryPanel = ({
       animate={{ 
         rotateX: rotate.x, 
         rotateY: rotate.y,
-        opacity: isAnyHovered && !isCurrentPanelActive ? 0.75 : 1,
-        scale: isAnyHovered && !isCurrentPanelActive ? 0.99 : 1,
-        filter: isAnyHovered && !isCurrentPanelActive ? "brightness(0.85)" : "brightness(1)"
+        opacity: isAnyHovered && !isCurrentPanelActive ? 0.8 : 1,
+        scale: isAnyHovered && !isCurrentPanelActive ? 0.98 : 1
       }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className={cn(
-        "bg-white/[0.01] backdrop-blur-sm rounded-[2.5rem] p-10 md:p-14 relative group overflow-visible border border-white/5 transition-all duration-700",
-        isCurrentPanelActive ? "border-white/20 bg-white/[0.03] z-[50]" : "border-white/5 z-10",
+        "bg-white/[0.02] backdrop-blur-md rounded-[2rem] p-8 sm:p-12 md:p-16 relative group overflow-hidden border border-white/5 transition-all duration-700",
+        isCurrentPanelActive ? "border-white/10 bg-white/[0.04] z-20" : "border-white/5 z-10",
         className
       )}
-      style={{ perspective: "2000px", transformStyle: "preserve-3d" }}
+      style={{ perspective: "1500px", transformStyle: "preserve-3d" }}
     >
-      {/* HUD status */}
-      <div className="absolute top-8 right-10 flex items-center gap-2 z-20">
-        <div className="w-2 h-2 rounded-full animate-pulse shadow-[0_0_12px_currentColor]" style={{ backgroundColor: color, color }} />
-        <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-white/50">{status}</span>
+      <div className="absolute top-6 right-8 flex items-center gap-2 z-20 opacity-40">
+        <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: color }} />
+        <span className="text-[9px] font-mono tracking-[0.2em] uppercase text-white font-bold">{status}</span>
       </div>
 
-      <div className="relative z-10" style={{ transform: "translateZ(40px)" }}>
-        <h3 className="text-3xl md:text-4xl font-heading font-black text-white mb-12 tracking-tight flex items-center gap-5">
-          <div className="w-10 h-[2px] shadow-[0_0_15px_currentColor]" style={{ backgroundColor: color, color }} />
+      <div className="relative z-10">
+        <h3 className="text-2xl sm:text-3xl font-heading font-black text-white mb-10 tracking-tight flex items-center gap-4">
+          <div className="w-8 h-[2px] opacity-50" style={{ backgroundColor: color }} />
           {title}
         </h3>
 
-        <div className="flex flex-wrap justify-center gap-x-10 gap-y-12 md:gap-x-14">
+        <div className="flex flex-wrap justify-center gap-x-8 gap-y-10 sm:gap-x-12">
           {techs.map((tech, i) => (
             <TechIcon 
               key={i} 
@@ -268,20 +204,14 @@ const CategoryPanel = ({
         </div>
       </div>
 
-      <div className="absolute inset-0 pointer-events-none opacity-[0.05] group-hover:opacity-[0.12] transition-opacity duration-700 overflow-hidden rounded-[2.5rem]">
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-700 overflow-hidden">
         {Visual && <Visual color={color} />}
       </div>
-
-      <div 
-        className="absolute inset-0 rounded-[2.5rem] pointer-events-none transition-all duration-700 opacity-0 group-hover:opacity-100 border border-white/10"
-        style={{ boxShadow: `inset 0 0 60px ${color}11, 0 0 30px ${color}08` }}
-      />
     </motion.div>
   );
 };
 
 export const TechStack = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [activeTech, setActiveTech] = useState<string | null>(null);
 
   const categories = [
@@ -289,7 +219,7 @@ export const TechStack = () => {
       title: "FRONTEND ENGINE",
       color: "#00D9FF",
       status: "SYSTEM ONLINE",
-      className: "md:col-span-2",
+      className: "lg:col-span-2",
       techs: [
         { name: "React", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg", description: "Component-based UI architecture" },
         { name: "Next.js", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg", invert: true, description: "Production-grade React framework" },
@@ -300,13 +230,13 @@ export const TechStack = () => {
       ],
       visual: ({ color }: any) => (
         <div className="flex flex-col gap-4 p-8">
-          {[...Array(10)].map((_, i) => (
+          {[...Array(6)].map((_, i) => (
             <motion.div 
               key={i}
               initial={{ x: -100 }}
               animate={{ x: 100 }}
-              transition={{ duration: 10 + i * 2, repeat: Infinity, ease: "linear" }}
-              className="h-px w-full bg-gradient-to-r from-transparent via-current to-transparent"
+              transition={{ duration: 8 + i * 2, repeat: Infinity, ease: "linear" }}
+              className="h-px w-full bg-gradient-to-r from-transparent via-current to-transparent opacity-20"
               style={{ color }}
             />
           ))}
@@ -323,13 +253,13 @@ export const TechStack = () => {
         { name: "Java", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg", description: "Enterprise-scale backend logic" }
       ],
       visual: ({ color }: any) => (
-        <div className="grid grid-cols-5 gap-4 p-8">
-          {[...Array(25)].map((_, i) => (
+        <div className="grid grid-cols-4 gap-4 p-8">
+          {[...Array(12)].map((_, i) => (
             <motion.div 
               key={i}
-              animate={{ opacity: [0.1, 0.5, 0.1] }}
+              animate={{ opacity: [0.1, 0.4, 0.1] }}
               transition={{ duration: 2, repeat: Infinity, delay: i * 0.1 }}
-              className="w-2 h-2 rounded-full"
+              className="w-1.5 h-1.5 rounded-full"
               style={{ backgroundColor: color }}
             />
           ))}
@@ -348,8 +278,8 @@ export const TechStack = () => {
         <div className="flex items-center justify-center h-full">
           <motion.div 
             animate={{ rotate: 360 }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="w-64 h-64 border border-dashed rounded-full"
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            className="w-48 h-48 border border-dashed rounded-full opacity-20"
             style={{ borderColor: color }}
           />
         </div>
@@ -358,18 +288,18 @@ export const TechStack = () => {
   ];
 
   return (
-    <section ref={containerRef} id="tech-stack" className="py-32 bg-[#030305] relative overflow-visible">
+    <section id="tech-stack" className="section-padding bg-[#030305] relative overflow-hidden">
       {/* Drifting Code Background */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03] select-none font-mono text-xs whitespace-nowrap leading-relaxed flex">
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.02] select-none font-mono text-[10px] whitespace-nowrap leading-relaxed flex hidden sm:flex">
         {[...Array(3)].map((_, j) => (
           <div key={j} className="flex-1 overflow-hidden">
             <motion.div
               animate={{ y: ["0%", "-50%"] }}
-              transition={{ duration: 40 + j * 10, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 60 + j * 20, repeat: Infinity, ease: "linear" }}
             >
-              {[...Array(100)].map((_, i) => (
-                <div key={i} className="mb-2">
-                  {`const tech = { id: ${i}, status: 'ACTIVE', type: 'NEURAL_NODE', sync: true };`}
+              {[...Array(50)].map((_, i) => (
+                <div key={i} className="mb-4">
+                  {`const node_${i} = { state: 'SYNCED', load: '${Math.floor(Math.random() * 100)}%' };`}
                 </div>
               ))}
             </motion.div>
@@ -378,26 +308,26 @@ export const TechStack = () => {
       </div>
 
       <div className="container mx-auto px-6 md:px-12 xl:px-20 max-w-[1400px] relative z-10">
-        <div className="mb-24">
+        <div className="mb-20 sm:mb-28 text-center sm:text-left">
           <motion.span 
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             className="section-label"
           >
-            THE STACK
+            THE_TECH_ECOSYSTEM
           </motion.span>
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-6xl lg:text-7xl font-heading font-black text-white max-w-4xl leading-[1.1] tracking-tight"
+            className="section-heading max-w-4xl"
           >
-            Technologies behind the <span className="bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-cyan)] via-blue-400 to-[var(--color-purple)] animate-gradient-shift bg-[length:200%_auto]">experience</span>.
+            Technologies behind the <span className="bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-cyan)] via-blue-400 to-[var(--color-purple)]">experience</span>.
           </motion.h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {categories.map((cat, i) => (
             <CategoryPanel 
               key={i} 
@@ -408,12 +338,11 @@ export const TechStack = () => {
             />
           ))}
 
-          {/* CLOUD & TOOLS - Large horizontal panel */}
           <CategoryPanel 
             title="OPS & ECOSYSTEM" 
             color="#FF6B6B" 
-            status="DEPLOYMENT READY" 
-            className="md:col-span-2"
+            status="READY_FOR_LAUNCH" 
+            className="lg:col-span-2"
             activeTech={activeTech}
             isAnyHovered={!!activeTech}
             onTechHover={setActiveTech}
@@ -424,10 +353,10 @@ export const TechStack = () => {
               { name: "Figma", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg", description: "Collaborative design interface" }
             ]}
             visual={({ color }: any) => (
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center justify-center opacity-10">
                 <motion.div 
-                  animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
-                  transition={{ duration: 4, repeat: Infinity }}
+                  animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.3, 0.1] }}
+                  transition={{ duration: 5, repeat: Infinity }}
                   className="w-full h-full rounded-full border border-current"
                   style={{ color }}
                 />

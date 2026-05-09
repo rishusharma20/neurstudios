@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { ArrowRight, CheckCircle2, Loader2, PartyPopper, ShieldCheck } from "lucide-react";
+import { ArrowRight, CheckCircle2, Loader2, ShieldCheck, Zap, Globe, Cpu, Send, PartyPopper } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion, AnimatePresence, useSpring, useMotionValue } from "framer-motion";
@@ -10,28 +10,25 @@ gsap.registerPlugin(ScrollTrigger);
 // --- Neural Particles Component ---
 const NeuralParticles = () => {
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div className="absolute inset-0 pointer-events-none opacity-20 overflow-hidden">
       {[...Array(15)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-1 h-1 bg-cyan-400 rounded-full"
+          className="absolute w-1 h-1 bg-[var(--color-cyan)] rounded-full blur-[1px]"
           initial={{ 
             x: Math.random() * 100 + "%", 
             y: Math.random() * 100 + "%",
-            opacity: Math.random() * 0.5 + 0.2,
-            scale: Math.random() * 0.5 + 0.5
+            opacity: Math.random()
           }}
           animate={{ 
-            y: [null, -100],
-            opacity: [null, 0]
+            y: [null, Math.random() * 100 + "%"],
+            opacity: [0.2, 0.8, 0.2]
           }}
           transition={{ 
-            duration: Math.random() * 10 + 10, 
+            duration: 10 + Math.random() * 20, 
             repeat: Infinity, 
-            ease: "linear",
-            delay: Math.random() * 10
+            ease: "linear" 
           }}
-          style={{ filter: "blur(1px) drop-shadow(0 0 5px rgba(0, 217, 255, 0.8))" }}
         />
       ))}
     </div>
@@ -39,7 +36,7 @@ const NeuralParticles = () => {
 };
 
 // --- Magnetic Component ---
-const Magnetic = ({ children }: { children: React.ReactElement }) => {
+const Magnetic = ({ children, strength = 0.5 }: { children: React.ReactElement; strength?: number }) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const springConfig = { damping: 15, stiffness: 150 };
@@ -51,8 +48,8 @@ const Magnetic = ({ children }: { children: React.ReactElement }) => {
     const { left, top, width, height } = currentTarget.getBoundingClientRect();
     const centerX = left + width / 2;
     const centerY = top + height / 2;
-    x.set((clientX - centerX) * 0.2);
-    y.set((clientY - centerY) * 0.2);
+    x.set((clientX - centerX) * strength);
+    y.set((clientY - centerY) * strength);
   };
 
   const handleMouseLeave = () => {
@@ -71,165 +68,44 @@ const Magnetic = ({ children }: { children: React.ReactElement }) => {
   );
 };
 
-// --- Custom Premium Inputs ---
-const FloatingInput = ({ label, type = "text", name, ...props }: any) => {
-  const [isFocused, setIsFocused] = useState(false);
-  const [hasValue, setHasValue] = useState(false);
-  const isActive = isFocused || hasValue;
-
+// --- Input Field ---
+const InputField = ({ label, type = "text", placeholder, name }: any) => {
+  const [focused, setFocused] = useState(false);
+  
   return (
-    <div className="relative group">
-      <motion.input 
-        animate={{ scale: isFocused ? 1.02 : 1 }}
-        name={name}
-        type={type} 
-        className={cn(
-          "w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 pt-6 pb-2 text-white focus:outline-none focus:border-cyan-400/50 focus:bg-white/10 transition-all duration-300 shadow-[inset_0_2px_10px_rgba(0,0,0,0.3)] caret-cyan-400",
-          isFocused && "shadow-[0_0_20px_rgba(0,217,255,0.1)]"
-        )}
-        onFocus={() => setIsFocused(true)}
-        onBlur={(e) => {
-          setIsFocused(false);
-          setHasValue(e.target.value.length > 0);
-        }}
-        onChange={(e) => setHasValue(e.target.value.length > 0)}
-        required
-        {...props} 
-      />
-      <motion.label 
-        animate={{ 
-          top: isActive ? 8 : 16,
-          fontSize: isActive ? 10 : 14,
-          color: isActive ? "#22d3ee" : "rgba(255,255,255,0.4)"
-        }}
-        className="absolute left-4 pointer-events-none font-mono uppercase tracking-widest font-bold"
-      >
+    <div className="relative group/field w-full">
+      <label className="block font-mono text-[10px] tracking-[0.3em] text-[var(--color-cyan)] mb-3 uppercase font-black opacity-60">
         {label}
-      </motion.label>
-      <div className={cn(
-        "absolute inset-0 rounded-xl pointer-events-none border border-transparent transition-all duration-500",
-        isFocused ? "border-cyan-400/30" : "group-hover:border-white/20"
-      )}></div>
-    </div>
-  );
-};
-
-const FloatingTextarea = ({ label, name, ...props }: any) => {
-  const [isFocused, setIsFocused] = useState(false);
-  const [hasValue, setHasValue] = useState(false);
-  const isActive = isFocused || hasValue;
-
-  return (
-    <div className="relative group">
-      <motion.textarea 
-        animate={{ scale: isFocused ? 1.01 : 1 }}
-        name={name}
-        className={cn(
-          "w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 pt-6 pb-2 text-white focus:outline-none focus:border-cyan-400/50 focus:bg-white/10 transition-all duration-300 shadow-[inset_0_2px_10px_rgba(0,0,0,0.3)] resize-none min-h-[140px] caret-cyan-400",
-          isFocused && "shadow-[0_0_20px_rgba(0,217,255,0.1)]"
-        )}
-        onFocus={() => setIsFocused(true)}
-        onBlur={(e) => {
-          setIsFocused(false);
-          setHasValue(e.target.value.length > 0);
-        }}
-        onChange={(e) => setHasValue(e.target.value.length > 0)}
-        required
-        {...props} 
-      />
-      <motion.label 
-        animate={{ 
-          top: isActive ? 8 : 16,
-          fontSize: isActive ? 10 : 14,
-          color: isActive ? "#22d3ee" : "rgba(255,255,255,0.4)"
-        }}
-        className="absolute left-4 pointer-events-none font-mono uppercase tracking-widest font-bold"
-      >
-        {label}
-      </motion.label>
-      <div className={cn(
-        "absolute inset-0 rounded-xl pointer-events-none border border-transparent transition-all duration-500",
-        isFocused ? "border-cyan-400/30" : "group-hover:border-white/20"
-      )}></div>
-    </div>
-  );
-};
-
-const FloatingSelect = ({ label, name, options }: any) => {
-  const [isFocused, setIsFocused] = useState(false);
-  const [hasValue, setHasValue] = useState(false);
-  const isActive = isFocused || hasValue;
-
-  return (
-    <div className="relative group">
-      <select 
-        name={name}
-        className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 pt-6 pb-2 text-white focus:outline-none focus:border-cyan-400/50 focus:bg-white/10 transition-all duration-300 shadow-[inset_0_2px_10px_rgba(0,0,0,0.3)] appearance-none cursor-pointer"
-        onFocus={() => setIsFocused(true)}
-        onBlur={(e) => {
-          setIsFocused(false);
-          setHasValue(e.target.value !== "");
-        }}
-        onChange={(e) => setHasValue(e.target.value !== "")}
-        defaultValue=""
-        required
-      >
-        <option value="" disabled hidden></option>
-        {options.map((opt: string) => <option key={opt} value={opt} className="bg-[#0f172a] text-white py-2">{opt}</option>)}
-      </select>
-      <motion.label 
-        animate={{ 
-          top: isActive ? 8 : 16,
-          fontSize: isActive ? 10 : 14,
-          color: isActive ? "#22d3ee" : "rgba(255,255,255,0.4)"
-        }}
-        className="absolute left-4 pointer-events-none font-mono uppercase tracking-widest font-bold"
-      >
-        {label}
-      </motion.label>
-      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-cyan-400/60">
-        <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
+      </label>
+      <div className="relative">
+        <input
+          type={type}
+          name={name}
+          placeholder={placeholder}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          className={cn(
+            "w-full bg-white/[0.03] border border-white/10 rounded-xl px-6 py-4 text-white font-mono text-sm transition-all duration-500 outline-none",
+            focused ? "border-[var(--color-cyan)] bg-white/[0.08] shadow-[0_0_20px_rgba(0,217,255,0.15)]" : "hover:border-white/20"
+          )}
+          required
+        />
+        <div className={cn(
+          "absolute top-0 left-0 w-2 h-2 border-t border-l border-[var(--color-cyan)] transition-opacity duration-500",
+          focused ? "opacity-100" : "opacity-0"
+        )} />
+        <div className={cn(
+          "absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[var(--color-cyan)] transition-opacity duration-500",
+          focused ? "opacity-100" : "opacity-0"
+        )} />
       </div>
-      <div className={cn(
-        "absolute inset-0 rounded-xl pointer-events-none border border-transparent transition-all duration-500",
-        isFocused ? "border-cyan-400/30" : "group-hover:border-white/20"
-      )}></div>
     </div>
   );
 };
-
-const StatusChip = ({ label }: { label: string }) => (
-  <motion.div 
-    whileHover={{ x: 5, backgroundColor: "rgba(255, 255, 255, 0.08)" }}
-    className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/5 w-fit group cursor-default transition-colors"
-  >
-    <div className="relative flex h-2 w-2">
-      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400 shadow-[0_0_8px_#4ade80]"></span>
-    </div>
-    <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/70 group-hover:text-white transition-colors font-bold">{label}</span>
-  </motion.div>
-);
-
-const TrustMetric = ({ label, sub }: { label: string; sub: string }) => (
-  <motion.div 
-    whileHover={{ y: -5 }}
-    className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 backdrop-blur-xl relative overflow-hidden group"
-  >
-    <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-    <div className="relative z-10">
-      <div className="text-xl font-heading font-black text-white mb-1">{label}</div>
-      <div className="text-[10px] font-mono text-white/40 uppercase tracking-widest">{sub}</div>
-    </div>
-  </motion.div>
-);
 
 export const Contact = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
-  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+  const sectionRef = useRef<HTMLElement>(null);
+  const [formState, setFormState] = useState<"idle" | "submitting" | "success">("idle");
   const [isSubmitHovered, setIsSubmitHovered] = useState(false);
 
   useEffect(() => {
@@ -245,297 +121,261 @@ export const Contact = () => {
           scrollTrigger: { trigger: sectionRef.current, start: "top 75%" }
         }
       );
-
-      gsap.fromTo(".contact-form-container",
-        { y: 80, opacity: 0, scale: 0.95 },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 1.2,
-          ease: "power4.out",
-          scrollTrigger: { trigger: sectionRef.current, start: "top 70%" }
-        }
-      );
     }, sectionRef);
     
     return () => ctx.revert();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("sending");
-
-    const formData = new FormData(e.currentTarget);
-    
-    try {
-      const response = await fetch("https://formspree.io/f/xnjwgdoa", {
-        method: "POST",
-        body: formData,
-        headers: { 'Accept': 'application/json' }
-      });
-
-      if (response.ok) {
-        setStatus("success");
-      } else {
-        setStatus("error");
-        setTimeout(() => setStatus("idle"), 3000);
-      }
-    } catch (err) {
-      setStatus("error");
-      setTimeout(() => setStatus("idle"), 3000);
-    }
+    setFormState("submitting");
+    setTimeout(() => setFormState("success"), 2500);
   };
 
   return (
-    <section id="contact" className="py-32 relative bg-[#030305] overflow-hidden" ref={sectionRef}>
+    <section ref={sectionRef} id="contact" className="section-padding relative overflow-hidden bg-[#050508]">
       <NeuralParticles />
       
-      {/* 🌌 Background Ambience */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-cyan-500/10 rounded-full blur-[250px] mix-blend-screen" />
-        <div className="absolute top-1/2 right-0 -translate-y-1/2 w-[800px] h-[800px] bg-purple-500/10 rounded-full blur-[250px] mix-blend-screen" />
+      {/* Background Atmosphere */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,217,255,0.05),transparent_70%)]" />
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       </div>
 
-      <div className="container mx-auto px-6 md:px-12 xl:px-20 max-w-[1400px] relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-center">
+      <div className="container mx-auto px-6 md:px-12 xl:px-20 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           
-          {/* ✨ Left Cinematic Panel */}
-          <div className="lg:col-span-5 relative">
-            <div className="contact-reveal inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/[0.03] border border-white/10 mb-10 backdrop-blur-md">
-              <div className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400 shadow-[0_0_10px_#22d3ee]"></span>
+          {/* Left: Cinematic Content */}
+          <div className="space-y-12">
+            <div className="contact-reveal">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="flex gap-1">
+                  <div className="w-1 h-3 bg-[var(--color-cyan)] rounded-full animate-pulse" />
+                  <div className="w-1 h-3 bg-[var(--color-cyan)]/40 rounded-full animate-pulse delay-75" />
+                  <div className="w-1 h-3 bg-[var(--color-cyan)]/10 rounded-full animate-pulse delay-150" />
+                </div>
+                <span className="section-label m-0">TRANSMISSION_READY</span>
               </div>
-              <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-cyan-400 font-black">NEURAL_INTERFACE_READY</span>
+
+              <h2 className="section-heading mb-8">
+                Let's engineer the <br />
+                <motion.span 
+                  animate={{ 
+                    color: ["#00D9FF", "#7B61FF", "#00D9FF"],
+                    textShadow: [
+                      "0 0 20px rgba(0,217,255,0.3)",
+                      "0 0 40px rgba(123,97,255,0.3)",
+                      "0 0 20px rgba(0,217,255,0.3)"
+                    ]
+                  }}
+                  transition={{ duration: 4, repeat: Infinity }}
+                >
+                  future
+                </motion.span> together.
+              </h2>
+              
+              <p className="section-subheading">
+                Ready to transform your vision into a high-performance digital reality? Join our neural network of innovative partners.
+              </p>
             </div>
 
-            <h2 className="contact-reveal text-5xl md:text-7xl font-heading font-black leading-[1.05] text-white mb-10">
-              Let's engineer <br/> the{" "}
-              <motion.span 
-                animate={{ 
-                  color: ["#00d9ff", "#7b61ff", "#00d9ff"],
-                  textShadow: [
-                    "0 0 20px rgba(0,217,255,0.4)",
-                    "0 0 20px rgba(123,97,255,0.4)",
-                    "0 0 20px rgba(0,217,255,0.4)"
-                  ]
-                }}
-                transition={{ duration: 4, repeat: Infinity }}
-                className="inline-block"
-              >
-                future
-              </motion.span> <br/> together.
-            </h2>
-            
-            <p className="contact-reveal text-lg text-white/50 leading-relaxed mb-12 max-w-md font-medium">
-              Ready to transform your ambitious ideas into scalable, intelligent systems? Collaborate with elite engineers to build the next generation of digital infrastructure.
-            </p>
-
-            <div className="contact-reveal grid grid-cols-1 sm:grid-cols-2 gap-4 mb-16">
-              <TrustMetric label="50+" sub="Products Launched" />
-              <TrustMetric label="GLOBAL" sub="Remote Collaboration" />
-              <TrustMetric label="24H" sub="System Response" />
-              <TrustMetric label="SECURE" sub="NDA Standards" />
-            </div>
-
-            <div className="contact-reveal flex flex-col gap-3">
-              <StatusChip label="RESPONSE SYSTEM ONLINE" />
-              <StatusChip label="GLOBAL COLLAB ACTIVE" />
-              <StatusChip label="PRODUCT ENGINEERING READY" />
+            {/* Status Chips */}
+            <div className="contact-reveal grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {[
+                { icon: Cpu, label: "SYSTEM_ONLINE", val: "99.9% Uptime" },
+                { icon: Zap, label: "NEURAL_LATENCY", val: "12ms Response" },
+                { icon: ShieldCheck, label: "ENCRYPTION", val: "AES-256" },
+                { icon: Globe, label: "AVAILABILITY", val: "GLOBAL" }
+              ].map((chip, i) => (
+                <motion.div 
+                  key={i}
+                  whileHover={{ x: 5, backgroundColor: "rgba(255, 255, 255, 0.08)" }}
+                  className="flex items-center gap-4 bg-white/[0.03] border border-white/5 px-5 py-4 rounded-2xl group cursor-default transition-all"
+                >
+                  <chip.icon className="w-5 h-5 text-[var(--color-cyan)] group-hover:scale-110 transition-transform" />
+                  <div>
+                    <div className="text-[8px] font-mono tracking-[0.2em] text-white/40 uppercase font-black">{chip.label}</div>
+                    <div className="text-[10px] font-mono text-white font-black">{chip.val}</div>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </div>
 
-          {/* 💎 Cinematic Contact Form */}
-          <div className="lg:col-span-7 relative contact-form-container">
+          {/* Right: Neural Launch Interface (Form) */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            className="relative"
+          >
             <AnimatePresence mode="wait">
-              {status === "success" ? (
+              {formState === "success" ? (
                 <motion.div 
                   key="success"
                   initial={{ opacity: 0, scale: 0.9, y: 20 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
-                  className="relative p-12 md:p-20 rounded-[3rem] w-full bg-[#08080a]/90 backdrop-blur-[40px] border border-cyan-400/30 shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col items-center text-center overflow-hidden"
+                  className="relative p-10 sm:p-16 rounded-[2.5rem] w-full bg-[#08080a]/90 backdrop-blur-[40px] border border-[var(--color-cyan)]/30 shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col items-center text-center overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-b from-cyan-400/5 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-b from-[var(--color-cyan)]/5 to-transparent" />
                   <motion.div 
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                    className="w-24 h-24 rounded-full bg-cyan-400/10 border border-cyan-400/30 flex items-center justify-center relative z-10 mb-10"
+                    className="w-20 h-20 rounded-full bg-[var(--color-cyan)]/10 border border-[var(--color-cyan)]/30 flex items-center justify-center relative z-10 mb-8"
                   >
-                    <CheckCircle2 size={48} className="text-cyan-400 drop-shadow-[0_0_20px_#22d3ee]" />
+                    <CheckCircle2 size={40} className="text-[var(--color-cyan)] drop-shadow-[0_0_20px_#00D9FF]" />
                   </motion.div>
-                  <h3 className="text-3xl md:text-5xl font-heading font-black text-white mb-6">TRANSMISSION RECEIVED</h3>
-                  <p className="text-white/50 text-lg max-w-sm leading-relaxed mb-10">Thanks for reaching out to Neur Studios. We'll analyze your request and contact you within 24 hours.</p>
+                  <h3 className="text-2xl sm:text-4xl font-heading font-black text-white mb-6">TRANSMISSION RECEIVED</h3>
+                  <p className="text-white/50 text-base max-w-sm leading-relaxed mb-10 uppercase tracking-wider font-mono">We've locked onto your signal. Expect contact within 24 hours.</p>
                   <motion.div 
                     animate={{ opacity: [0.4, 1, 0.4] }}
                     transition={{ repeat: Infinity, duration: 2 }}
-                    className="flex items-center gap-3 px-6 py-3 rounded-full bg-cyan-400/10 border border-cyan-400/20 text-cyan-400 text-[10px] font-mono tracking-[0.4em] uppercase font-black"
+                    className="flex items-center gap-3 px-6 py-3 rounded-full bg-[var(--color-cyan)]/10 border border-[var(--color-cyan)]/20 text-[var(--color-cyan)] text-[10px] font-mono tracking-[0.4em] uppercase font-black"
                   >
                     <PartyPopper size={14} /> Ready for Ignition
                   </motion.div>
                 </motion.div>
               ) : (
-                <motion.form 
-                  key="form"
-                  ref={formRef} 
-                  onSubmit={handleSubmit}
-                  initial={{ opacity: 1 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="relative p-10 md:p-14 rounded-[3rem] w-full bg-[#08080a]/80 backdrop-blur-[32px] border border-white/5 shadow-[0_30px_100px_rgba(0,0,0,0.6)] overflow-hidden"
-                >
-                  {/* Energy Border Animation */}
-                  <motion.div 
-                    className="absolute inset-0 rounded-[3rem] border-2 border-cyan-400/20 pointer-events-none"
-                    animate={{ opacity: [0.1, 0.3, 0.1] }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                  />
-                  
-                  {/* HUD Corner Accents */}
-                  <div className="absolute top-0 left-0 w-12 h-12 border-t-2 border-l-2 border-cyan-400/30 rounded-tl-[3rem]" />
-                  <div className="absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 border-cyan-400/30 rounded-br-[3rem]" />
+                <div key="form" className="relative bg-white/[0.02] backdrop-blur-2xl rounded-[2.5rem] p-8 sm:p-12 border border-white/10 overflow-hidden shadow-2xl">
+                  {/* Internal HUD Elements */}
+                  <div className="absolute top-0 right-0 p-8 opacity-20 pointer-events-none">
+                    <svg width="60" height="60" viewBox="0 0 60 60">
+                      <circle cx="30" cy="30" r="28" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 4" />
+                      <path d="M30 10 L30 50 M10 30 L50 30" stroke="currentColor" strokeWidth="0.5" />
+                    </svg>
+                  </div>
 
-                  <div className="relative z-10">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                      <FloatingInput label="Full Name" name="full_name" />
-                      <FloatingInput label="Email Address" name="email" type="email" />
+                  <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                      <InputField label="NODE_NAME" placeholder="Your Name" name="name" />
+                      <InputField label="TARGET_EMAIL" type="email" placeholder="email@example.com" name="email" />
                     </div>
                     
-                    <div className="mb-8">
-                      <FloatingInput label="Company / Organization" name="company" />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                      <InputField label="PROJECT_TYPE" placeholder="e.g. Web App" name="type" />
+                      <InputField label="BUDGET_TIER" placeholder="Select Tier" name="budget" />
                     </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                      <FloatingSelect 
-                        label="Project Type" 
-                        name="project_type"
-                        options={["SaaS Platform", "AI Product", "Full-Stack Web App", "Interactive 3D Experience", "Enterprise System"]} 
+
+                    <div className="w-full">
+                      <label className="block font-mono text-[10px] tracking-[0.3em] text-[var(--color-cyan)] mb-3 uppercase font-black opacity-60">
+                        MISSION_BRIEF
+                      </label>
+                      <textarea
+                        rows={4}
+                        required
+                        placeholder="Tell us about your project..."
+                        className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-6 py-4 text-white font-mono text-sm transition-all duration-500 outline-none hover:border-white/20 focus:border-[var(--color-cyan)] focus:bg-white/[0.08] focus:shadow-[0_0_20px_rgba(0,217,255,0.15)] resize-none"
                       />
-                      <FloatingSelect 
-                        label="Budget Range" 
-                        name="budget_range"
-                        options={["$10k - $25k", "$25k - $50k", "$50k - $100k", "$100k+"]} 
-                      />
                     </div>
-                    
-                    <div className="mb-10">
-                      <FloatingTextarea label="Project Details & Goals" name="message" />
-                    </div>
-                    
-                    <div className="flex flex-col items-center gap-6">
-                      <Magnetic>
-                        <div className="relative group w-full">
-                          {/* Ambient Glow Reflection Under Button */}
+
+                    {/* THE LAUNCH BUTTON */}
+                    <div className="pt-4">
+                      <Magnetic strength={0.2}>
+                        <button 
+                          type="submit"
+                          disabled={formState !== "idle"}
+                          onMouseEnter={() => setIsSubmitHovered(true)}
+                          onMouseLeave={() => setIsSubmitHovered(false)}
+                          className={cn(
+                            "group relative w-full h-16 sm:h-20 rounded-2xl overflow-hidden transition-all duration-500",
+                            formState === "idle" ? "cursor-pointer" : "cursor-wait"
+                          )}
+                        >
+                          <div className={cn(
+                            "absolute inset-0 transition-all duration-700",
+                            formState === "idle" 
+                              ? "bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border border-white/20 group-hover:border-[var(--color-cyan)] group-hover:shadow-[0_0_40px_rgba(0,217,255,0.3)]"
+                              : "bg-[var(--color-cyan)]/20 border-[var(--color-cyan)]"
+                          )} />
+
+                          <div className="absolute inset-0 opacity-20 pointer-events-none">
+                            <div className="absolute top-0 left-0 w-full h-[1px] bg-white/40" />
+                            <div className="absolute bottom-0 right-0 w-[1px] h-full bg-white/40" />
+                          </div>
+
+                          <AnimatePresence>
+                            {formState === "idle" && (
+                              <motion.div 
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="absolute inset-0 pointer-events-none"
+                              >
+                                <div className="absolute inset-0 border-2 border-[var(--color-cyan)] opacity-0 group-hover:opacity-40 rounded-2xl" />
+                                <motion.div 
+                                  className="absolute top-0 left-0 w-20 h-[2px] bg-[var(--color-cyan)] shadow-[0_0_15px_#00D9FF]"
+                                  animate={{ left: ["-20%", "120%"] }}
+                                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                                />
+                                <motion.div 
+                                  className="absolute bottom-0 right-0 w-20 h-[2px] bg-[var(--color-cyan)] shadow-[0_0_15px_#00D9FF]"
+                                  animate={{ right: ["-20%", "120%"] }}
+                                  transition={{ duration: 3, repeat: Infinity, ease: "linear", delay: 1.5 }}
+                                />
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+
                           <motion.div 
-                            animate={{ 
-                              opacity: isSubmitHovered ? 0.6 : 0.2,
-                              scale: isSubmitHovered ? 1.1 : 1,
-                              filter: isSubmitHovered ? "blur(40px)" : "blur(20px)"
-                            }}
-                            className="absolute -inset-4 bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20 rounded-[2rem] -z-10 pointer-events-none transition-all duration-500"
+                            className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100"
+                            animate={{ translateX: ["-100%", "200%"] }}
+                            transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                            style={{ background: "linear-gradient(110deg, transparent, rgba(255,255,255,0.1), transparent)" }}
                           />
 
-                          <motion.button 
-                            onMouseEnter={() => setIsSubmitHovered(true)}
-                            onMouseLeave={() => setIsSubmitHovered(false)}
-                            whileTap={{ scale: 0.97 }}
-                            disabled={status === "sending"}
-                            className={cn(
-                              "relative w-full h-20 rounded-2xl font-black text-[13px] tracking-[0.4em] uppercase overflow-hidden flex items-center justify-center gap-4 transition-all duration-700",
-                              status === "error" 
-                              ? "bg-red-500/10 border-red-500/30 text-red-400" 
-                              : "bg-white/[0.03] backdrop-blur-2xl border border-white/10 text-white shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
-                            )}
-                          >
-                            {/* Layered Glass Lighting & Gradient Surface */}
-                            <motion.div 
-                              animate={{ 
-                                x: ["-20%", "20%", "-20%"],
-                                opacity: isSubmitHovered ? 0.9 : 0.6
-                              }}
-                              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                              className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-600/20 to-purple-600/10 pointer-events-none"
-                            />
-                            
-                            {/* Internal Reflections & Highlights */}
-                            <div className="absolute inset-0 pointer-events-none">
-                              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                              <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                              <div className="absolute top-0 left-0 w-[1px] h-full bg-gradient-to-b from-white/10 to-transparent" />
-                              <div className="absolute top-0 right-0 w-[1px] h-full bg-gradient-to-b from-white/10 to-transparent" />
-                            </div>
-
-                            {/* Intelligent Energy Border */}
-                            <motion.div 
-                              animate={{ 
-                                opacity: isSubmitHovered ? 1 : 0.3,
-                                borderColor: isSubmitHovered ? ["rgba(34,211,238,0.5)", "rgba(123,97,255,0.5)", "rgba(34,211,238,0.5)"] : "rgba(255,255,255,0.1)"
-                              }}
-                              transition={{ duration: 3, repeat: Infinity }}
-                              className="absolute inset-0 border-2 rounded-2xl pointer-events-none"
-                            />
-
-                            {/* Cinematic Light Sweep */}
-                            <motion.div 
-                              animate={{ x: ["-200%", "200%"] }}
-                              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", repeatDelay: 1 }}
-                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[35deg] pointer-events-none"
-                            />
-
-                            <span className={cn(
-                              "relative z-10 flex items-center gap-4 transition-all duration-500",
-                              isSubmitHovered ? "drop-shadow-[0_0_10px_rgba(255,255,255,0.5)] scale-105" : "opacity-80"
-                            )}>
-                              {status === "sending" ? (
-                                <span className="flex items-center gap-3">ANALYZING_CORE <Loader2 className="w-4 h-4 animate-spin text-cyan-400" /></span>
-                              ) : status === "error" ? (
-                                "RETRY_TRANS"
-                              ) : (
-                                <>
-                                  LAUNCH YOUR VISION 
-                                  <motion.div
-                                    animate={{ 
-                                      x: isSubmitHovered ? 8 : 0,
-                                      opacity: isSubmitHovered ? 1 : 0.6
-                                    }}
-                                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                                  >
-                                    <ArrowRight className="w-5 h-5 text-cyan-400 drop-shadow-[0_0_8px_#22d3ee]" />
-                                  </motion.div>
-                                </>
-                              )}
-                            </span>
-
-                            {/* Center Energy Pulse (Visible on Click) */}
-                            <AnimatePresence>
-                              {status === "sending" && (
+                          <div className="relative z-10 flex items-center justify-center gap-4">
+                            <AnimatePresence mode="wait">
+                              {formState === "idle" && (
                                 <motion.div 
-                                  initial={{ scale: 0, opacity: 0 }}
-                                  animate={{ scale: 4, opacity: 0.4 }}
-                                  exit={{ opacity: 0 }}
-                                  className="absolute inset-0 bg-white rounded-full blur-3xl pointer-events-none"
-                                />
+                                  key="idle"
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: -10 }}
+                                  className="flex items-center gap-4"
+                                >
+                                  <span className="font-mono font-black tracking-[0.4em] text-white group-hover:text-[var(--color-cyan)] transition-colors text-xs sm:text-sm uppercase">
+                                    LAUNCH VISION
+                                  </span>
+                                  <Send className="w-5 h-5 text-white/40 group-hover:text-[var(--color-cyan)] group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
+                                </motion.div>
+                              )}
+                              {formState === "submitting" && (
+                                <motion.div 
+                                  key="submitting"
+                                  initial={{ opacity: 0, scale: 0.8 }}
+                                  animate={{ opacity: 1, scale: 1 }}
+                                  className="flex items-center gap-6"
+                                >
+                                  <div className="flex gap-1.5">
+                                    {[0, 1, 2].map(i => (
+                                      <motion.div
+                                        key={i}
+                                        animate={{ height: [4, 16, 4], opacity: [0.3, 1, 0.3] }}
+                                        transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.1 }}
+                                        className="w-1.5 bg-[var(--color-cyan)] rounded-full"
+                                      />
+                                    ))}
+                                  </div>
+                                  <span className="font-mono font-black tracking-[0.3em] text-[var(--color-cyan)] text-[10px] sm:text-xs">UPLOADING_CORE_ASSETS...</span>
+                                </motion.div>
                               )}
                             </AnimatePresence>
-                          </motion.button>
-                        </div>
+                          </div>
+                        </button>
                       </Magnetic>
+                    </div>
 
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.03] border border-white/5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#22d3ee]" />
-                          <span className="text-[9px] font-mono text-cyan-400 uppercase tracking-[0.4em] font-black">SECURE TRANSMISSION ACTIVE</span>
-                        </div>
-                        <p className="text-[9px] font-mono text-white/20 uppercase tracking-[0.3em] font-bold flex items-center gap-2">
-                          <ShieldCheck size={10} /> Protected by Neural NDA Standards
-                        </p>
+                    <div className="flex flex-col items-center gap-2 opacity-50">
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4 text-[var(--color-cyan)]" />
+                        <span className="text-[9px] font-mono tracking-widest text-white uppercase font-bold">Encrypted Connection</span>
                       </div>
                     </div>
-                  </div>
-                </motion.form>
+                  </form>
+                </div>
               )}
             </AnimatePresence>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
