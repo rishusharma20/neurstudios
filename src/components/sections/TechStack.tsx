@@ -46,15 +46,15 @@ const TechIcon = ({
       case "React":
         return (
           <motion.div 
-            className="absolute inset-0 border border-cyan-400 rounded-full opacity-30"
-            animate={{ rotate: 360, scale: [1, 1.2, 1] }}
+            className="absolute inset-0 border border-cyan-400 rounded-full opacity-40"
+            animate={{ rotate: 360, scale: [1, 1.25, 1] }}
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
           />
         );
       case "Next.js":
         return (
           <motion.div 
-            className="absolute inset-0 border-t border-white rounded-full opacity-40 shadow-[0_0_15px_rgba(255,255,255,0.3)]"
+            className="absolute inset-0 border-t border-white rounded-full opacity-50 shadow-[0_0_20px_rgba(255,255,255,0.4)]"
             animate={{ rotate: -360 }}
             transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
           />
@@ -62,8 +62,8 @@ const TechIcon = ({
       case "Three.js":
         return (
           <motion.div 
-            className="absolute inset-0 bg-white/10 blur-sm"
-            animate={{ opacity: [0.1, 0.4, 0.1] }}
+            className="absolute inset-0 bg-white/15 blur-md"
+            animate={{ opacity: [0.1, 0.5, 0.1] }}
             transition={{ duration: 2, repeat: Infinity }}
           />
         );
@@ -73,7 +73,10 @@ const TechIcon = ({
   };
 
   return (
-    <div className="relative flex flex-col items-center gap-3">
+    <div className={cn(
+      "relative flex flex-col items-center gap-3 transition-all duration-500",
+      isHovered ? "z-[60]" : "z-10"
+    )}>
       <motion.div
         onMouseEnter={onHoverStart}
         onMouseLeave={() => {
@@ -84,19 +87,19 @@ const TechIcon = ({
         animate={{ 
           rotateX: tilt.x, 
           rotateY: tilt.y,
-          scale: isHovered ? 1.25 : (isAnyHovered ? 0.9 : 1),
-          z: isHovered ? 100 : 0,
-          filter: isAnyHovered && !isHovered ? "blur(4px) brightness(0.5)" : "blur(0px) brightness(1)",
-          opacity: isAnyHovered && !isHovered ? 0.4 : 1
+          scale: isHovered ? 1.25 : (isAnyHovered ? 0.92 : 1),
+          z: isHovered ? 120 : 0,
+          filter: isAnyHovered && !isHovered ? "blur(2px) brightness(0.6)" : "blur(0px) brightness(1.1)",
+          opacity: isAnyHovered && !isHovered ? 0.45 : 1
         }}
         transition={{ type: "spring", stiffness: 350, damping: 25 }}
         className={cn(
-          "relative w-16 h-16 md:w-24 md:h-24 rounded-2xl bg-white/[0.03] backdrop-blur-md border border-white/10 flex items-center justify-center cursor-pointer overflow-visible group/icon shadow-2xl",
-          isHovered && "border-opacity-100 z-50"
+          "relative w-16 h-16 md:w-24 md:h-24 rounded-2xl bg-white/[0.04] backdrop-blur-xl border border-white/10 flex items-center justify-center cursor-pointer overflow-visible group/icon shadow-2xl",
+          isHovered && "border-opacity-100"
         )}
         style={{ 
           borderColor: isHovered ? color : "rgba(255,255,255,0.1)",
-          boxShadow: isHovered ? `0 0 50px ${color}44, inset 0 0 20px ${color}22` : "none",
+          boxShadow: isHovered ? `0 0 60px ${color}55, inset 0 0 25px ${color}33` : "none",
           transformStyle: "preserve-3d"
         }}
       >
@@ -105,25 +108,25 @@ const TechIcon = ({
           {isHovered && (
             <motion.div 
               initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1.2 }}
+              animate={{ opacity: 1, scale: 1.3 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              className="absolute inset-[-20%] rounded-3xl blur-2xl -z-10"
-              style={{ background: `radial-gradient(circle, ${color}33 0%, transparent 70%)` }}
+              className="absolute inset-[-30%] rounded-full blur-3xl -z-10 pointer-events-none"
+              style={{ background: `radial-gradient(circle, ${color}44 0%, transparent 70%)` }}
             />
           )}
         </AnimatePresence>
 
-        {/* Apple Vision Pro Tracking Light */}
+        {/* Vision Pro Tracking Light */}
         <div 
           className="absolute inset-0 pointer-events-none opacity-0 group-hover/icon:opacity-100 transition-opacity duration-300 rounded-2xl overflow-hidden"
           style={{
-            background: `radial-gradient(circle at ${mousePos.x}px ${mousePos.y}px, ${color}44, transparent 70%)`,
+            background: `radial-gradient(circle at ${mousePos.x}px ${mousePos.y}px, ${color}55, transparent 70%)`,
           }}
         />
 
         {/* Shimmer Sweep */}
         <motion.div 
-          className="absolute inset-0 pointer-events-none opacity-0 group-hover/icon:opacity-20"
+          className="absolute inset-0 pointer-events-none opacity-0 group-hover/icon:opacity-30"
           animate={isHovered ? { x: ["-100%", "200%"] } : {}}
           transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
           style={{ background: "linear-gradient(90deg, transparent, white, transparent)" }}
@@ -136,19 +139,19 @@ const TechIcon = ({
           alt={name} 
           className={cn(
             "w-8 h-8 md:w-12 md:h-12 transition-all duration-500 relative z-10",
-            invert && "invert opacity-80",
-            isHovered ? "drop-shadow-[0_0_20px_" + color + "]" : ""
+            invert && "invert opacity-90",
+            isHovered ? "drop-shadow-[0_0_25px_" + color + "] brightness-110" : "brightness-90"
           )}
-          style={{ transform: "translateZ(40px)" }}
+          style={{ transform: "translateZ(50px)" }}
         />
         
         {/* Animated HUD Grid */}
-        <div className="absolute inset-0 opacity-[0.05] pointer-events-none bg-[linear-gradient(rgba(255,255,255,.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.1)_1px,transparent_1px)] bg-[size:12px_12px] rounded-2xl" />
+        <div className="absolute inset-0 opacity-[0.07] pointer-events-none bg-[linear-gradient(rgba(255,255,255,.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.1)_1px,transparent_1px)] bg-[size:12px_12px] rounded-2xl" />
       </motion.div>
 
       <span className={cn(
         "font-mono text-[10px] md:text-xs tracking-[0.3em] transition-all duration-500 uppercase font-bold",
-        isHovered ? "text-white opacity-100 translate-y-1" : (isAnyHovered ? "opacity-0" : "text-white/30")
+        isHovered ? "text-white opacity-100 translate-y-2 text-glow" : (isAnyHovered ? "opacity-0" : "text-white/30")
       )}>
         {name}
       </span>
@@ -157,22 +160,22 @@ const TechIcon = ({
       <AnimatePresence>
         {isHovered && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.8 }}
+            initial={{ opacity: 0, y: 25, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.8 }}
-            className="absolute -top-28 left-1/2 -translate-x-1/2 w-64 z-50 pointer-events-none"
+            exit={{ opacity: 0, y: 25, scale: 0.8 }}
+            className="absolute -top-32 left-1/2 -translate-x-1/2 w-64 z-[70] pointer-events-none"
           >
-            <div className="bg-black/80 backdrop-blur-2xl px-6 py-4 rounded-xl border border-cyan-400/40 shadow-[0_0_50px_rgba(0,0,0,0.8)] relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-cyan-400" />
-              <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-cyan-400" />
+            <div className="bg-black/90 backdrop-blur-3xl px-6 py-5 rounded-xl border-2 border-cyan-400/50 shadow-[0_0_60px_rgba(0,0,0,0.9)] relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyan-400" />
+              <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyan-400" />
               
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/10 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/15 to-transparent" />
               <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                  <span className="text-[9px] font-mono text-cyan-400 uppercase tracking-[0.2em] font-bold">NODE_INFO_ACTIVE</span>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_#00D9FF]" />
+                  <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-[0.3em] font-black">NODE_INFO_ACTIVE</span>
                 </div>
-                <p className="text-[11px] font-mono text-white leading-relaxed text-center uppercase tracking-wider font-medium">
+                <p className="text-[12px] font-mono text-white leading-relaxed text-center uppercase tracking-wider font-bold">
                   {description}
                 </p>
               </div>
@@ -213,8 +216,10 @@ const CategoryPanel = ({
     const rect = panelRef.current.getBoundingClientRect();
     const x = (e.clientY - rect.top) / rect.height - 0.5;
     const y = (e.clientX - rect.left) / rect.width - 0.5;
-    setRotate({ x: x * -10, y: y * 10 });
+    setRotate({ x: x * -8, y: y * 8 });
   };
+
+  const isCurrentPanelActive = techs.find(t => t.name === activeTech);
 
   return (
     <motion.div
@@ -224,21 +229,21 @@ const CategoryPanel = ({
       animate={{ 
         rotateX: rotate.x, 
         rotateY: rotate.y,
-        opacity: isAnyHovered && !techs.find(t => t.name === activeTech) ? 0.6 : 1,
-        scale: isAnyHovered && !techs.find(t => t.name === activeTech) ? 0.98 : 1,
-        filter: isAnyHovered && !techs.find(t => t.name === activeTech) ? "blur(2px)" : "blur(0px)"
+        opacity: isAnyHovered && !isCurrentPanelActive ? 0.75 : 1,
+        scale: isAnyHovered && !isCurrentPanelActive ? 0.99 : 1,
+        filter: isAnyHovered && !isCurrentPanelActive ? "blur(1px) brightness(0.8)" : "blur(0px) brightness(1)"
       }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className={cn(
         "bg-white/[0.01] backdrop-blur-sm rounded-[2.5rem] p-10 md:p-14 relative group overflow-hidden border border-white/5 transition-all duration-700",
-        isAnyHovered && techs.find(t => t.name === activeTech) ? "border-white/20 bg-white/[0.03]" : "border-white/5",
+        isCurrentPanelActive ? "border-white/20 bg-white/[0.04]" : "border-white/5",
         className
       )}
-      style={{ perspective: "1500px", transformStyle: "preserve-3d" }}
+      style={{ perspective: "2000px", transformStyle: "preserve-3d" }}
     >
       {/* HUD status */}
       <div className="absolute top-8 right-10 flex items-center gap-2 z-20">
-        <div className="w-2 h-2 rounded-full animate-pulse shadow-[0_0_10px_currentColor]" style={{ backgroundColor: color, color }} />
+        <div className="w-2 h-2 rounded-full animate-pulse shadow-[0_0_12px_currentColor]" style={{ backgroundColor: color, color }} />
         <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-white/50">{status}</span>
       </div>
 
@@ -263,7 +268,7 @@ const CategoryPanel = ({
         </div>
       </div>
 
-      <div className="absolute inset-0 pointer-events-none opacity-[0.05] group-hover:opacity-[0.1] transition-opacity duration-700 overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none opacity-[0.05] group-hover:opacity-[0.12] transition-opacity duration-700 overflow-hidden">
         {Visual && <Visual color={color} />}
       </div>
 
@@ -354,10 +359,10 @@ export const TechStack = () => {
 
   return (
     <section ref={containerRef} id="tech-stack" className="py-32 bg-[#030305] relative overflow-hidden">
-      {/* Cinematic Focus Overlay */}
+      {/* Cinematic Focus Overlay - LIGHTER VERSION */}
       <motion.div 
         animate={{ opacity: activeTech ? 1 : 0 }}
-        className="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-20 pointer-events-none"
+        className="absolute inset-0 bg-black/30 backdrop-blur-[1px] z-30 pointer-events-none"
       />
 
       {/* Drifting Code Background */}
