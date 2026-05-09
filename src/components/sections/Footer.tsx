@@ -13,8 +13,8 @@ export const Footer = () => {
   ];
 
   const socialLinks = [
-    { Icon: FaGithub, href: "#" },
-    { Icon: FaLinkedin, href: "#" },
+    { Icon: FaGithub, href: "https://github.com/rishusharma20" },
+    { Icon: FaLinkedin, href: "https://www.linkedin.com/in/rishusharma2007/" },
     { Icon: FaTwitter, href: "#" },
     { Icon: FaInstagram, href: "#" },
   ];
