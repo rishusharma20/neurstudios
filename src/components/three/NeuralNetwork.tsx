@@ -94,23 +94,17 @@ const AmoebaMaterialBase = shaderMaterial(
       vUv = uv;
       vNormal = normal;
       
-      // Multi-layered organic turbulence
-      // Layer 1: Large scale shape deformation (Amoeba body)
-      float noiseLrg = snoise(position * 0.8 + uTime * 0.3);
+      // Control morphing cycle: distort -> reform
+      // Frequency for the main cycle (slow)
+      float cycle = sin(uTime * 0.4) * 0.5 + 0.5; // 0 to 1
       
-      // Layer 2: Medium scale surface ripples (Edge detail)
-      float noiseMed = snoise(position * 2.5 - uTime * 0.5);
+      // Noise-based displacement
+      float noise = snoise(position * 1.5 + uTime * 0.5);
+      vNoise = noise;
       
-      // Layer 3: High frequency micro-wobble (Energy buzz)
-      float noiseSml = snoise(position * 5.0 + uTime * 1.2);
-      
-      vNoise = noiseLrg * 0.6 + noiseMed * 0.3 + noiseSml * 0.1;
-      
-      // Constant high-energy distortion (Never returns to circle)
-      float displacement = (noiseLrg * 0.35) + (noiseMed * 0.1) + (noiseSml * 0.02);
-      
-      // Add a slow overall "breathing" expansion
-      displacement += sin(uTime * 0.8) * 0.05;
+      // Multi-layered distortion
+      float displacement = noise * 0.15 * cycle;
+      displacement += snoise(position * 4.0 + uTime * 0.8) * 0.03 * cycle;
       
       vec3 newPosition = position + normal * displacement;
       gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
@@ -128,26 +122,17 @@ const AmoebaMaterialBase = shaderMaterial(
 
     void main() {
       // Fresnel-like glow effect
-      float fresnel = pow(1.0 - dot(vNormal, vec3(0, 0, 1)), 2.5);
+      float fresnel = pow(1.0 - dot(vNormal, vec3(0, 0, 1)), 2.0);
       
-      // Dynamic Plasma Vortex Flow
-      vec2 center = vUv - 0.5;
-      float angle = atan(center.y, center.x);
-      float dist = length(center);
+      // Plasma internal energy shifting
+      vec3 color = mix(uColor, uGlowColor, vNoise * 0.5 + 0.5);
+      color += vec3(fresnel * 0.5);
       
-      // Create swirling energy bands
-      float swirl = sin(angle * 3.0 + dist * 10.0 - uTime * 2.0);
-      float plasma = snoise(vec3(vUv * 3.0, uTime * 0.5));
-      
-      vec3 color = mix(uColor, uGlowColor, plasma * 0.5 + 0.5);
-      color = mix(color, uGlowColor * 1.5, swirl * 0.2 + 0.2);
-      color += vec3(fresnel * 0.8);
-      
-      // Add shimmering energy currents
-      float currents = sin(vNoise * 15.0 + uTime * 3.0) * 0.1;
-      color += currents;
+      // Add subtle shimmering light streaks
+      float shimmer = sin(vUv.x * 20.0 + uTime * 2.0) * 0.05;
+      color += shimmer;
 
-      gl_FragColor = vec4(color, uOpacity + fresnel * 0.4);
+      gl_FragColor = vec4(color, uOpacity + fresnel * 0.3);
     }
   `
 );
