@@ -441,7 +441,7 @@ export const Contact = () => {
                             whileTap={{ scale: 0.97 }}
                             disabled={status === "sending"}
                             className={cn(
-                              "relative w-full h-18 rounded-2xl font-black text-[12px] tracking-[0.2em] uppercase overflow-hidden flex items-center justify-center transition-all duration-700",
+                              "relative w-full h-20 rounded-2xl font-black text-[13px] tracking-[0.4em] uppercase overflow-hidden flex items-center justify-center gap-4 transition-all duration-700",
                               status === "error" 
                               ? "bg-red-500/10 border-red-500/30 text-red-400" 
                               : "bg-white/[0.03] backdrop-blur-2xl border border-white/10 text-white shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
@@ -450,42 +450,44 @@ export const Contact = () => {
                             {/* Layered Glass Lighting & Gradient Surface */}
                             <motion.div 
                               animate={{ 
-                                x: ["-10%", "10%", "-10%"],
-                                opacity: isSubmitHovered ? 0.8 : 0.5
+                                x: ["-20%", "20%", "-20%"],
+                                opacity: isSubmitHovered ? 0.9 : 0.6
                               }}
-                              transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-                              className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-blue-600/15 to-purple-600/5 pointer-events-none"
+                              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                              className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-600/20 to-purple-600/10 pointer-events-none"
                             />
                             
                             {/* Internal Reflections & Highlights */}
                             <div className="absolute inset-0 pointer-events-none">
-                              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-                              <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+                              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                              <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                              <div className="absolute top-0 left-0 w-[1px] h-full bg-gradient-to-b from-white/10 to-transparent" />
+                              <div className="absolute top-0 right-0 w-[1px] h-full bg-gradient-to-b from-white/10 to-transparent" />
                             </div>
 
                             {/* Intelligent Energy Border */}
                             <motion.div 
                               animate={{ 
-                                opacity: isSubmitHovered ? 0.8 : 0.2,
-                                borderColor: isSubmitHovered ? ["rgba(34,211,238,0.4)", "rgba(123,97,255,0.4)", "rgba(34,211,238,0.4)"] : "rgba(255,255,255,0.05)"
+                                opacity: isSubmitHovered ? 1 : 0.3,
+                                borderColor: isSubmitHovered ? ["rgba(34,211,238,0.5)", "rgba(123,97,255,0.5)", "rgba(34,211,238,0.5)"] : "rgba(255,255,255,0.1)"
                               }}
-                              transition={{ duration: 4, repeat: Infinity }}
+                              transition={{ duration: 3, repeat: Infinity }}
                               className="absolute inset-0 border-2 rounded-2xl pointer-events-none"
                             />
 
                             {/* Cinematic Light Sweep */}
                             <motion.div 
                               animate={{ x: ["-200%", "200%"] }}
-                              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
-                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[35deg] pointer-events-none"
+                              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", repeatDelay: 1 }}
+                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[35deg] pointer-events-none"
                             />
 
                             <span className={cn(
-                              "relative z-10 flex items-center gap-3 transition-all duration-500",
-                              isSubmitHovered ? "drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]" : "opacity-70"
+                              "relative z-10 flex items-center gap-4 transition-all duration-500",
+                              isSubmitHovered ? "drop-shadow-[0_0_10px_rgba(255,255,255,0.5)] scale-105" : "opacity-80"
                             )}>
                               {status === "sending" ? (
-                                <span className="flex items-center gap-3">ANALYZING_CORE <Loader2 className="w-3.5 h-3.5 animate-spin text-cyan-400" /></span>
+                                <span className="flex items-center gap-3">ANALYZING_CORE <Loader2 className="w-4 h-4 animate-spin text-cyan-400" /></span>
                               ) : status === "error" ? (
                                 "RETRY_TRANS"
                               ) : (
@@ -493,12 +495,12 @@ export const Contact = () => {
                                   LAUNCH YOUR VISION 
                                   <motion.div
                                     animate={{ 
-                                      x: isSubmitHovered ? 5 : 0,
+                                      x: isSubmitHovered ? 8 : 0,
                                       opacity: isSubmitHovered ? 1 : 0.6
                                     }}
-                                    transition={{ type: "spring", stiffness: 400, damping: 12 }}
+                                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
                                   >
-                                    <ArrowRight className="w-4 h-4 text-cyan-400 drop-shadow-[0_0_5px_#22d3ee]" />
+                                    <ArrowRight className="w-5 h-5 text-cyan-400 drop-shadow-[0_0_8px_#22d3ee]" />
                                   </motion.div>
                                 </>
                               )}
@@ -509,7 +511,7 @@ export const Contact = () => {
                               {status === "sending" && (
                                 <motion.div 
                                   initial={{ scale: 0, opacity: 0 }}
-                                  animate={{ scale: 3, opacity: 0.3 }}
+                                  animate={{ scale: 4, opacity: 0.4 }}
                                   exit={{ opacity: 0 }}
                                   className="absolute inset-0 bg-white rounded-full blur-3xl pointer-events-none"
                                 />
@@ -522,9 +524,9 @@ export const Contact = () => {
                       <div className="flex flex-col items-center gap-2">
                         <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.03] border border-white/5">
                           <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#22d3ee]" />
-                          <span className="text-[9px] font-mono text-cyan-400 uppercase tracking-[0.2em] font-black">SECURE TRANSMISSION ACTIVE</span>
+                          <span className="text-[9px] font-mono text-cyan-400 uppercase tracking-[0.4em] font-black">SECURE TRANSMISSION ACTIVE</span>
                         </div>
-                        <p className="text-[9px] font-mono text-white/20 uppercase tracking-[0.2em] font-bold flex items-center gap-2">
+                        <p className="text-[9px] font-mono text-white/20 uppercase tracking-[0.3em] font-bold flex items-center gap-2">
                           <ShieldCheck size={10} /> Protected by Neural NDA Standards
                         </p>
                       </div>
