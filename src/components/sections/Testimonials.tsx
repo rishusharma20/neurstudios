@@ -7,74 +7,86 @@ import { cn } from "../../utils/helpers";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// --- 🌌 NEURAL PARTICLE SYSTEM ---
-const NeuralSpark = ({ delay = 0 }) => (
+// --- 🌌 ATMOSPHERIC COMPONENTS ---
+const NeuralGrid = () => (
+  <div className="absolute inset-0 pointer-events-none opacity-[0.05]">
+    <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
+    <motion.div 
+      animate={{ opacity: [0.1, 0.3, 0.1] }}
+      transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,var(--color-cyan)_0%,transparent_70%)] opacity-20" 
+    />
+  </div>
+);
+
+const CinematicFog = () => (
+  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <motion.div 
+      animate={{ 
+        x: ["-20%", "20%"],
+        y: ["-10%", "10%"],
+      }}
+      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+      className="absolute top-0 left-0 w-[200%] h-[200%] bg-[radial-gradient(circle_at_50%_50%,rgba(0,217,255,0.03)_0%,transparent_50%)] blur-[100px]" 
+    />
+    <motion.div 
+      animate={{ 
+        x: ["20%", "-20%"],
+        y: ["10%", "-10%"],
+      }}
+      transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+      className="absolute bottom-0 right-0 w-[200%] h-[200%] bg-[radial-gradient(circle_at_50%_50%,rgba(168,85,247,0.03)_0%,transparent_50%)] blur-[120px]" 
+    />
+  </div>
+);
+
+const MemoryParticle = ({ delay = 0 }) => (
   <motion.div
-    initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+    initial={{ opacity: 0, scale: 0 }}
     animate={{ 
-      opacity: [0, 0.6, 0],
+      opacity: [0, 0.4, 0],
       scale: [0, 1.5, 0],
-      x: [0, (Math.random() - 0.5) * 200],
-      y: [0, (Math.random() - 0.5) * 200],
+      x: [0, (Math.random() - 0.5) * 300],
+      y: [0, (Math.random() - 0.5) * 300],
     }}
-    transition={{ 
-      duration: 4 + Math.random() * 4, 
-      repeat: Infinity, 
-      delay,
-      ease: "circOut"
-    }}
-    className="absolute w-px h-px bg-[var(--color-cyan)] shadow-[0_0_10px_var(--color-cyan)] pointer-events-none"
+    transition={{ duration: 8 + Math.random() * 4, repeat: Infinity, delay, ease: "easeOut" }}
+    className="absolute w-1 h-1 bg-[var(--color-cyan)] rounded-full blur-[1px] pointer-events-none"
     style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}
   />
 );
 
-const LightStreak = ({ delay = 0 }) => (
-  <motion.div
-    initial={{ x: "-100%", opacity: 0 }}
-    animate={{ x: "200%", opacity: [0, 0.2, 0] }}
-    transition={{ duration: 10, repeat: Infinity, delay, ease: "linear" }}
-    className="absolute h-px w-64 bg-gradient-to-r from-transparent via-[var(--color-cyan)] to-transparent rotate-[-45deg] pointer-events-none"
-    style={{ top: `${Math.random() * 100}%`, left: `${Math.random() * 100}%` }}
-  />
-);
-
-// --- 🧊 HOLOGRAPHIC CARD COMPONENT ---
+// --- 🧊 HOLOGRAPHIC CARD ---
 const TestimonialCard = ({ 
   testimonial, 
   isFocused, 
   isAnyFocused, 
   onHover, 
-  index 
+  index,
+  isFeatured 
 }: { 
   testimonial: any; 
   isFocused: boolean; 
   isAnyFocused: boolean;
   onHover: (focused: boolean) => void;
   index: number;
+  isFeatured: boolean;
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   
-  // Magnetic & Lighting Logic
+  // Magnetic Logic
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const rotateX = useSpring(useTransform(y, [-150, 150], [12, -12]), { stiffness: 100, damping: 25 });
-  const rotateY = useSpring(useTransform(x, [-150, 150], [-12, 12]), { stiffness: 100, damping: 25 });
+  const rotateX = useSpring(useTransform(y, [-100, 100], [10, -10]), { stiffness: 100, damping: 30 });
+  const rotateY = useSpring(useTransform(x, [-100, 100], [-10, 10]), { stiffness: 100, damping: 30 });
   
-  // Weightless Floating Drift
-  const floatY = useSpring(0, { stiffness: 50, damping: 20 });
+  // Floating Inertia
+  const floatY = useSpring(0, { stiffness: 40, damping: 20 });
   useEffect(() => {
-    if (!isFocused) {
-      const interval = setInterval(() => {
-        floatY.set(Math.sin(Date.now() / 1000) * 10);
-      }, 50);
-      return () => clearInterval(interval);
-    } else {
-      floatY.set(-15); // Elevate on focus
-    }
-  }, [isFocused, floatY]);
+    const interval = setInterval(() => {
+      floatY.set(Math.sin(Date.now() / 1500 + index) * (isFeatured ? 15 : 10));
+    }, 50);
+    return () => clearInterval(interval);
+  }, [index, isFeatured, floatY]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
@@ -83,10 +95,6 @@ const TestimonialCard = ({
     const centerY = rect.top + rect.height / 2;
     x.set(e.clientX - centerX);
     y.set(e.clientY - centerY);
-    
-    // Internal refraction spotlight
-    mouseX.set(e.clientX - rect.left);
-    mouseY.set(e.clientY - rect.top);
   };
 
   const handleMouseLeave = () => {
@@ -103,80 +111,81 @@ const TestimonialCard = ({
       onMouseLeave={handleMouseLeave}
       style={{ rotateX, rotateY, y: floatY, perspective: 1200 }}
       animate={{ 
-        scale: isFocused ? 1.05 : 1,
+        scale: isFocused ? 1.05 : isFeatured ? 1 : 0.95,
         opacity: !isAnyFocused || isFocused ? 1 : 0.3,
-        filter: !isAnyFocused || isFocused ? "blur(0px) brightness(1.2)" : "blur(8px) brightness(0.6)",
+        z: isFocused ? 50 : 0,
+        filter: !isAnyFocused || isFocused ? "blur(0px) brightness(1.1)" : "blur(4px) brightness(0.6)",
       }}
       className={cn(
-        "testimonial-card group relative cursor-pointer transition-all duration-700",
-        "min-w-[320px] sm:min-w-[440px] lg:min-w-0 snap-center h-full",
-        index === 1 && !isAnyFocused && "lg:-translate-y-12"
+        "relative transition-all duration-700 ease-out",
+        isFeatured ? "z-20 w-full max-w-[500px]" : "z-10 w-full max-w-[400px]",
+        "snap-center lg:snap-none"
       )}
     >
-      {/* 💠 Holographic Aura */}
+      {/* 🔮 Glowing Aura */}
       <div className={cn(
-        "absolute -inset-4 rounded-[3rem] transition-all duration-1000 blur-2xl opacity-0 group-hover:opacity-20",
-        "bg-[radial-gradient(circle_at_50%_50%,var(--color-cyan),transparent_70%)]"
+        "absolute -inset-8 rounded-[4rem] transition-all duration-1000 blur-[80px] opacity-0 group-hover:opacity-20",
+        isFocused ? "opacity-30 scale-110" : "opacity-0 scale-90",
+        "bg-[radial-gradient(circle_at_50%_50%,var(--color-cyan),var(--color-purple),transparent_70%)]"
       )} />
 
-      {/* Internal Light Sweep */}
-      <motion.div 
-        animate={{ x: ["-100%", "200%"] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-        className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-r from-transparent via-white/[0.05] to-transparent skew-x-[-20deg] opacity-0 group-hover:opacity-100"
-      />
-
-      {/* Main Ultra-Glass Body */}
-      <div className="glass rounded-[2.5rem] p-8 sm:p-12 relative overflow-hidden h-full flex flex-col justify-between border border-white/5 bg-white/[0.02] backdrop-blur-[40px] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.8)] transition-all duration-700 group-hover:border-[var(--color-cyan)]/20">
+      {/* Main Glass Terminal */}
+      <div className={cn(
+        "glass rounded-[3rem] p-8 sm:p-12 relative overflow-hidden h-full flex flex-col justify-between border border-white/10 bg-white/[0.01] backdrop-blur-[60px] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.9)] transition-all duration-700",
+        isFocused && "border-[var(--color-cyan)]/30 bg-white/[0.03]"
+      )}>
         
-        {/* Dynamic Refraction Spotlight */}
+        {/* Holographic Scanline */}
         <motion.div 
-          className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-          style={{
-            background: useTransform(
-              [mouseX, mouseY],
-              ([cx, cy]) => `radial-gradient(600px circle at ${cx}px ${cy}px, rgba(0, 217, 255, 0.12), transparent 40%)`
-            )
-          }}
+          animate={{ y: ["-100%", "200%"] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+          className="absolute inset-0 z-0 pointer-events-none opacity-[0.03] bg-gradient-to-b from-transparent via-[var(--color-cyan)] to-transparent h-20 w-full"
         />
 
-        {/* Redesigned Holographic Quote */}
-        <div className="absolute -top-6 -right-6 opacity-[0.03] group-hover:opacity-[0.08] transition-all duration-1000 group-hover:rotate-12 group-hover:scale-125">
-          <Quote size={180} className="text-[var(--color-cyan)]" strokeWidth={0.5} />
+        {/* 💬 Oversized Quote Symbol */}
+        <div className={cn(
+          "absolute -top-10 -right-10 opacity-[0.03] transition-all duration-1000",
+          isFocused ? "opacity-[0.08] scale-125 rotate-12" : "opacity-[0.03] scale-100 rotate-0"
+        )}>
+          <Quote size={220} className="text-[var(--color-cyan)]" strokeWidth={0.5} />
         </div>
 
         <div className="relative z-10">
           <div className="flex justify-between items-start mb-12">
-            {/* Sparkle Star System */}
+            {/* 🌟 AI Star System */}
             <div className="flex gap-2">
               {[...Array(5)].map((_, i) => (
                 <motion.div
                   key={i}
                   animate={{ 
                     scale: isFocused ? [1, 1.3, 1] : 1,
-                    filter: isFocused ? ["blur(0px)", "blur(2px)", "blur(0px)"] : "blur(0px)",
+                    color: isFocused ? "var(--color-cyan)" : "rgba(255,255,255,0.2)"
                   }}
-                  transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.15 }}
+                  transition={{ duration: 1, repeat: Infinity, delay: i * 0.1 }}
                 >
-                  <Star size={16} className="text-[var(--color-cyan)] fill-[var(--color-cyan)] drop-shadow-[0_0_12px_rgba(0,217,255,0.8)]" />
+                  <Star size={16} className="fill-current drop-shadow-[0_0_10px_currentColor]" />
                 </motion.div>
               ))}
             </div>
-            {/* AI Verification Module */}
-            <div className="flex items-center gap-2.5 bg-black/40 border border-[#00FF88]/20 px-3.5 py-1.5 rounded-xl backdrop-blur-md relative overflow-hidden group/badge">
+            {/* 🟢 AI Verification Chip */}
+            <div className="flex items-center gap-3 bg-black/60 border border-[#00FF88]/20 px-4 py-2 rounded-2xl backdrop-blur-xl relative group/chip overflow-hidden">
               <motion.div 
-                animate={{ y: ["-100%", "200%"] }}
+                animate={{ x: ["-100%", "200%"] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 bg-gradient-to-b from-transparent via-[#00FF88]/10 to-transparent pointer-events-none"
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-[#00FF88]/10 to-transparent pointer-events-none"
               />
-              <div className="w-2 h-2 rounded-full bg-[#00FF88] shadow-[0_0_10px_#00FF88] relative">
-                <div className="absolute inset-0 rounded-full bg-[#00FF88] animate-ping opacity-40" />
+              <div className="w-2.5 h-2.5 rounded-full bg-[#00FF88] shadow-[0_0_12px_#00FF88] relative">
+                <div className="absolute inset-0 rounded-full bg-[#00FF88] animate-ping opacity-30" />
               </div>
-              <span className="text-[#00FF88] text-[10px] font-mono font-black tracking-[0.2em] uppercase">SYSTEM_VERIFIED</span>
+              <span className="text-[#00FF88] text-[10px] font-mono font-black tracking-[0.2em] uppercase">VERIFIED_LOG</span>
             </div>
           </div>
           
-          <p className="text-xl sm:text-2xl text-white/90 leading-tight mb-12 font-medium tracking-tight group-hover:text-white transition-colors duration-500">
+          <p className={cn(
+            "text-white/80 leading-relaxed font-medium transition-all duration-500 tracking-tight",
+            isFeatured ? "text-2xl sm:text-3xl mb-14" : "text-xl sm:text-2xl mb-10",
+            isFocused && "text-white"
+          )}>
             "{testimonial.quote}
             <span className="text-[var(--color-cyan)] font-black italic relative px-2">
               {testimonial.highlight}
@@ -190,28 +199,32 @@ const TestimonialCard = ({
           </p>
         </div>
 
-        {/* Holographic Client Profile Card */}
-        <div className="flex items-center gap-6 pt-10 border-t border-white/5 relative z-10 group/profile">
+        {/* 👤 Premium Identity Area */}
+        <div className="flex items-center gap-6 pt-10 border-t border-white/5 relative z-10">
           <div className="relative">
-            <div className="w-16 h-16 rounded-[1.5rem] p-px bg-gradient-to-br from-[var(--color-cyan)]/40 to-transparent shadow-[0_0_20px_rgba(0,217,255,0.2)]">
+            <div className={cn(
+              "rounded-[1.5rem] p-px transition-all duration-700",
+              isFocused ? "bg-gradient-to-br from-[var(--color-cyan)] to-[var(--color-purple)] shadow-[0_0_30px_rgba(0,217,255,0.3)]" : "bg-white/10 shadow-none",
+              isFeatured ? "w-20 h-20" : "w-16 h-16"
+            )}>
               <div className="w-full h-full rounded-[1.4rem] overflow-hidden">
-                <img src={testimonial.image} alt={testimonial.name} className="w-full h-full object-cover transition-transform duration-1000 group-hover/profile:scale-110" />
+                <img src={testimonial.image} alt={testimonial.name} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
               </div>
             </div>
             <motion.div 
-              animate={{ rotate: -360 }}
-              transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               className="absolute -inset-2 border border-dashed border-[var(--color-cyan)]/10 rounded-[1.8rem] pointer-events-none"
             />
           </div>
           <div className="flex-1">
-            <h4 className="text-white font-black text-lg tracking-tighter leading-none mb-2">{testimonial.name}</h4>
+            <h4 className="text-white font-black text-xl tracking-tighter leading-none mb-2">{testimonial.name}</h4>
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-cyan)] shadow-[0_0_5px_var(--color-cyan)]" />
                 <p className="text-[10px] text-white/50 font-mono font-black tracking-widest uppercase">{testimonial.role}</p>
               </div>
-              <span className="text-[10px] text-[var(--color-cyan)]/60 font-black uppercase tracking-[0.3em] pl-3.5">{testimonial.category}</span>
+              <span className="text-[11px] text-[var(--color-cyan)]/60 font-black uppercase tracking-[0.3em] pl-3.5">{testimonial.category}</span>
             </div>
           </div>
         </div>
@@ -228,24 +241,22 @@ export const Testimonials = () => {
 
   const testimonials = useMemo(() => [
     {
-      quote: "Neur Studios transformed our vision into a ",
-      highlight: "stunning digital experience",
-      quoteEnd: ". The attention to detail and creativity exceeded our expectations at every level.",
-      name: "Sarah Chen",
-      role: "CEO • TechFlow",
-      category: "AI SaaS Platform",
-      location: "Singapore",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150&h=150"
-    },
-    {
       quote: "Working with them was seamless. They delivered a ",
       highlight: "high-performance system",
       quoteEnd: " that perfectly captured our identity and scaled our operations effortlessly.",
       name: "Michael Rodriguez",
       role: "Founder • CreativeHub",
       category: "E-Commerce",
-      location: "New York",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=150&h=150"
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200&h=200"
+    },
+    {
+      quote: "Neur Studios transformed our vision into a ",
+      highlight: "stunning digital experience",
+      quoteEnd: ". The attention to detail and creativity exceeded our expectations at every level.",
+      name: "Sarah Chen",
+      role: "CEO • TechFlow",
+      category: "AI SaaS Platform",
+      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200&h=200"
     },
     {
       quote: "The team's expertise is unmatched. Our new platform is fast, beautiful, and ",
@@ -254,50 +265,26 @@ export const Testimonials = () => {
       name: "Emily Thompson",
       role: "Director • InnovateCo",
       category: "FinTech App",
-      location: "London",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=150&h=150"
+      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=200&h=200"
     }
   ], []);
-
-  const metrics = [
-    { value: "50+", label: "Projects Delivered" },
-    { value: "20+", label: "Happy Clients" },
-    { value: "98%", label: "Satisfaction Rate" },
-    { value: "15+", label: "Tech Stack" }
-  ];
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        ".testimonial-card",
-        { y: 100, opacity: 0, filter: "blur(20px)" },
-        {
-          y: 0,
-          opacity: 1,
-          filter: "blur(0px)",
-          duration: 1.5,
-          stagger: 0.3,
-          ease: "expo.out",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top 70%",
-          }
-        }
-      );
-
-      gsap.fromTo(
-        ".metric-item",
-        { y: 40, opacity: 0, scale: 0.8 },
+        ".testimonial-card-wrapper",
+        { y: 150, opacity: 0, scale: 0.8, filter: "blur(20px)" },
         {
           y: 0,
           opacity: 1,
           scale: 1,
-          duration: 1,
-          stagger: 0.15,
-          ease: "back.out(1.7)",
+          filter: "blur(0px)",
+          duration: 2,
+          stagger: 0.4,
+          ease: "expo.out",
           scrollTrigger: {
-            trigger: metricsRef.current,
-            start: "top 95%",
+            trigger: containerRef.current,
+            start: "top 70%",
           }
         }
       );
@@ -308,117 +295,111 @@ export const Testimonials = () => {
 
   return (
     <section id="testimonials" className="section-padding bg-[#030305] relative overflow-hidden" ref={containerRef}>
-      {/* 🎞️ ULTRA-PREMIUM CINEMATIC DEPTH LAYERS */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        {/* Animated Fog & Noise */}
-        <div className="absolute inset-0 bg-[#030305] opacity-50" />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] mix-blend-overlay" />
-        
-        {/* Neural Grid with Breathing Glow */}
-        <div className="absolute inset-0 opacity-[0.07]" 
-          style={{ backgroundImage: 'linear-gradient(var(--color-cyan) 1px, transparent 1px), linear-gradient(90deg, var(--color-cyan) 1px, transparent 1px)', backgroundSize: '100px 100px' }} 
-        />
-        
-        {/* Cinematic Particles & Streaks */}
-        {[...Array(20)].map((_, i) => <NeuralSpark key={i} delay={i * 0.5} />)}
-        {[...Array(5)].map((_, i) => <LightStreak key={i} delay={i * 2} />)}
-
-        {/* Depth Spotlights */}
-        <motion.div 
-          animate={{ scale: [1, 1.3, 1], opacity: [0.05, 0.1, 0.05] }}
-          transition={{ duration: 15, repeat: Infinity }}
-          className="absolute top-[-20%] left-[-10%] w-[80%] h-[80%] bg-[radial-gradient(circle_at_50%_50%,var(--color-cyan)_0%,transparent_70%)] blur-[120px]" 
-        />
-        <motion.div 
-          animate={{ scale: [1.3, 1, 1.3], opacity: [0.05, 0.1, 0.05] }}
-          transition={{ duration: 18, repeat: Infinity }}
-          className="absolute bottom-[-30%] right-[-10%] w-[90%] h-[90%] bg-[radial-gradient(circle_at_50%_50%,var(--color-purple)_0%,transparent_70%)] blur-[150px]" 
-        />
-      </div>
+      {/* 🌌 CINEMATIC BACKGROUND SYSTEM */}
+      <NeuralGrid />
+      <CinematicFog />
+      {[...Array(30)].map((_, i) => <MemoryParticle key={i} delay={i * 0.3} />)}
 
       <div className="container mx-auto px-6 relative z-10">
         
-        {/* ✨ HOLOGRAPHIC TYPOGRAPHY HERO */}
-        <div className="mb-24 sm:mb-40 flex flex-col items-center text-center relative">
+        {/* ✨ CINEMATIC TYPOGRAPHY HERO */}
+        <div className="mb-32 sm:mb-48 flex flex-col items-center text-center relative">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
             className="flex flex-col items-center"
           >
-            <div className="section-label mb-8 px-6 py-2 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-md">
-              MEMORY_ARCHIVE_v2.0
+            <div className="section-label mb-10 px-8 py-2.5 rounded-full bg-white/[0.03] border border-white/5 backdrop-blur-md tracking-[0.4em]">
+              AI_MEMORY_VAULT_v4
             </div>
             
-            <h2 className="section-heading mb-10 max-w-5xl !leading-[0.95]">
-              Experiences that <br className="hidden sm:block" /> clients <span className="relative inline-block px-2 group/hologram">
-                <span className="text-gradient drop-shadow-[0_0_30px_rgba(0,217,255,0.4)] transition-all duration-700 group-hover/hologram:drop-shadow-[0_0_50px_rgba(0,217,255,0.8)]">
+            <h2 className="section-heading mb-12 max-w-5xl !leading-[0.9] !text-[clamp(2.5rem,8vw,5.5rem)]">
+              Experiences that <br className="hidden sm:block" /> clients <span className="relative inline-block px-4 group/hologram">
+                <span className="text-gradient drop-shadow-[0_0_40px_rgba(0,217,255,0.5)] transition-all duration-1000 group-hover/hologram:drop-shadow-[0_0_70px_rgba(0,217,255,0.9)] animate-pulse">
                   remember
                 </span>
-                {/* Holographic Glitch Layer */}
+                
+                {/* Local particles for the heading word */}
+                <div className="absolute inset-0 pointer-events-none">
+                  {[...Array(6)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ 
+                        opacity: [0, 1, 0],
+                        scale: [0, 1, 0],
+                        x: [(Math.random() - 0.5) * 100, (Math.random() - 0.5) * 150],
+                        y: [(Math.random() - 0.5) * 50, (Math.random() - 0.5) * -100],
+                      }}
+                      transition={{ duration: 3 + Math.random() * 2, repeat: Infinity, delay: i * 0.5 }}
+                      className="absolute w-1 h-1 bg-[var(--color-cyan)] rounded-full blur-[0.5px]"
+                    />
+                  ))}
+                </div>
+
+                {/* Holographic Lighting & Glitch Layer */}
                 <motion.span 
-                  animate={{ opacity: [0, 0.2, 0, 0.3, 0], x: [0, -2, 2, -1, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, times: [0, 0.1, 0.15, 0.2, 1] }}
-                  className="absolute inset-0 text-[var(--color-purple)] blur-[2px] pointer-events-none translate-x-1"
+                  animate={{ opacity: [0, 0.4, 0, 0.6, 0], x: [0, -3, 3, -1, 0] }}
+                  transition={{ duration: 5, repeat: Infinity, times: [0, 0.1, 0.12, 0.15, 1] }}
+                  className="absolute inset-0 text-[var(--color-purple)] blur-[3px] pointer-events-none translate-x-2"
                 >
                   remember
                 </motion.span>
-                <motion.div 
-                  animate={{ 
-                    opacity: [0.1, 0.3, 0.1],
-                    scale: [1, 1.1, 1]
-                  }}
-                  transition={{ duration: 5, repeat: Infinity }}
-                  className="absolute -inset-8 bg-[var(--color-cyan)]/5 blur-[50px] rounded-full -z-10"
-                />
+                <div className="absolute -inset-12 bg-[var(--color-cyan)]/10 blur-[60px] rounded-full -z-10 animate-breathing" />
               </span>
             </h2>
             
-            <p className="section-subheading mx-auto text-white/50">
-              A neural collection of visionary partnerships. Engineering digital legacies that transcend the ordinary and redefine market standards.
+            <p className="section-subheading mx-auto text-white/40 max-w-2xl text-xl leading-relaxed">
+              Unlocking the neural archives of visionary partnerships. Every project is a curated memory of technical excellence and creative mastery.
             </p>
           </motion.div>
         </div>
 
-        {/* 🧊 HOLOGRAPHIC MEMORY GRID */}
-        <div className="flex gap-8 overflow-x-auto pb-16 snap-x hide-scrollbar lg:grid lg:grid-cols-3 lg:gap-12 lg:overflow-visible lg:pb-0">
-          {testimonials.map((t, idx) => (
+        {/* 🧊 ASYMMETRICAL FLOATING MEMORY VAULT */}
+        <div className="relative flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-0 lg:h-[700px] lg:mb-40">
+          
+          {/* Featured Center Card (Large) */}
+          <div className="testimonial-card-wrapper lg:absolute lg:left-1/2 lg:-translate-x-1/2 lg:z-30 w-full flex justify-center">
             <TestimonialCard 
-              key={idx}
-              index={idx}
-              testimonial={t}
-              isFocused={focusedIndex === idx}
+              index={1}
+              testimonial={testimonials[1]}
+              isFocused={focusedIndex === 1}
               isAnyFocused={focusedIndex !== null}
-              onHover={(focused) => setFocusedIndex(focused ? idx : null)}
+              onHover={(focused) => setFocusedIndex(focused ? 1 : null)}
+              isFeatured={true}
             />
-          ))}
+          </div>
+
+          {/* Left Card (Slightly Smaller, Offset) */}
+          <div className="testimonial-card-wrapper lg:absolute lg:left-0 lg:top-20 lg:z-10 w-full flex justify-center lg:justify-start">
+            <TestimonialCard 
+              index={0}
+              testimonial={testimonials[0]}
+              isFocused={focusedIndex === 0}
+              isAnyFocused={focusedIndex !== null}
+              onHover={(focused) => setFocusedIndex(focused ? 0 : null)}
+              isFeatured={false}
+            />
+          </div>
+
+          {/* Right Card (Slightly Smaller, Offset) */}
+          <div className="testimonial-card-wrapper lg:absolute lg:right-0 lg:bottom-20 lg:z-10 w-full flex justify-center lg:justify-end">
+            <TestimonialCard 
+              index={2}
+              testimonial={testimonials[2]}
+              isFocused={focusedIndex === 2}
+              isAnyFocused={focusedIndex !== null}
+              onHover={(focused) => setFocusedIndex(focused ? 2 : null)}
+              isFeatured={false}
+            />
+          </div>
+
         </div>
 
-        {/* ⚡ QUANTUM METRICS SYSTEM */}
-        <div ref={metricsRef} className="mt-40 sm:mt-64 pt-24 border-t border-white/5 grid grid-cols-2 md:grid-cols-4 gap-12 relative">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-px bg-gradient-to-r from-transparent via-[var(--color-cyan)]/40 to-transparent" />
-          
-          {metrics.map((metric, idx) => (
-            <motion.div 
-              key={idx} 
-              whileHover={{ y: -10, scale: 1.05 }}
-              className="metric-item flex flex-col items-center justify-center text-center group"
-            >
-              <div className="relative">
-                <h3 className="text-6xl sm:text-7xl font-heading font-black mb-4 text-white tracking-tighter transition-all duration-700 group-hover:text-[var(--color-cyan)] group-hover:drop-shadow-[0_0_30px_rgba(0,217,255,0.6)]">
-                  {metric.value}
-                </h3>
-                <motion.div 
-                  initial={{ width: 0 }}
-                  whileInView={{ width: "100%" }}
-                  transition={{ duration: 1, delay: 0.5 }}
-                  className="absolute -bottom-2 left-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--color-cyan)] to-transparent"
-                />
-              </div>
-              <p className="text-[12px] font-mono tracking-[0.5em] uppercase text-white/20 group-hover:text-white/50 transition-colors duration-300 font-black mt-6">
-                {metric.label}
-              </p>
-            </motion.div>
-          ))}
+        {/* 🌌 SCROLL INDICATOR / DECORATION */}
+        <div className="flex justify-center mt-32 lg:mt-0 opacity-20">
+          <div className="w-px h-32 bg-gradient-to-b from-transparent via-[var(--color-cyan)] to-transparent" />
         </div>
 
       </div>
