@@ -214,8 +214,7 @@ export const TechStack = () => {
       status: "REAL-TIME SYNC",
       techs: [
         { name: "MongoDB", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg", description: "NoSQL document storage" },
-        { name: "PostgreSQL", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg", description: "Advanced relational database" },
-        { name: "Redis", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg", description: "Ultra-fast in-memory cache" }
+        { name: "MySQL", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg", description: "Reliable relational database" }
       ],
       visual: ({ color }: any) => (
         <div className="flex items-center justify-center h-full">
