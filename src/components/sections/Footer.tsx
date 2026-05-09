@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { FaGithub, FaLinkedin, FaTwitter, FaInstagram } from "react-icons/fa";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { motion } from "framer-motion";
 import logo from "../../assets/logo.png";
 

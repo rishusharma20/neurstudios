@@ -3,7 +3,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { Particles } from "./Particles";
 import { PostProcessing } from "./PostProcessing";
-import { Line, Html } from "@react-three/drei";
+import { Line, Html, MeshDistortMaterial } from "@react-three/drei";
 
 const Branch = ({ points, label, endPoint, index }: { points: THREE.Vector3[], label: string, endPoint: THREE.Vector3, index: number }) => {
   const particleRef = useRef<THREE.Mesh>(null);
@@ -154,10 +154,33 @@ const NeuralCell = () => {
         />
       </mesh>
       
-      {/* Inner glowing core */}
+      {/* Inner glowing core — Living Organic Plasma Blob */}
       <mesh>
-        <sphereGeometry args={[0.8, 32, 32]} />
-        <meshBasicMaterial color="#7B61FF" transparent opacity={0.6} />
+        <sphereGeometry args={[0.8, 64, 64]} />
+        <MeshDistortMaterial 
+          color="#7B61FF"
+          speed={1.5}
+          distort={0.4}
+          radius={1}
+          transparent
+          opacity={0.6}
+          emissive="#7B61FF"
+          emissiveIntensity={0.5}
+        />
+      </mesh>
+      {/* Secondary Depth Layer */}
+      <mesh scale={0.9}>
+        <sphereGeometry args={[0.8, 64, 64]} />
+        <MeshDistortMaterial 
+          color="#5B21FF"
+          speed={2}
+          distort={0.5}
+          radius={1}
+          transparent
+          opacity={0.3}
+          emissive="#5B21FF"
+          emissiveIntensity={0.2}
+        />
       </mesh>
 
       {/* Dendrites & Services */}
