@@ -1,15 +1,18 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { NeuralNetwork } from "../three/NeuralNetwork";
 import { Magnetic } from "../ui/Magnetic";
 import { gsap } from "gsap";
 import { motion } from "framer-motion";
+import { cn } from "../../utils/helpers";
 
 export const Hero = () => {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const statsRef = useRef<HTMLDivElement>(null);
+
+  const [hoveredStat, setHoveredStat] = useState<number | null>(null);
 
   useEffect(() => {
     const tl = gsap.timeline();
@@ -38,6 +41,27 @@ export const Hero = () => {
       "-=0.4"
     );
   }, []);
+
+  const stats = [
+    { 
+      label: "Projects Delivered", 
+      value: "25+", 
+      accent: "#00B8D9", // Muted Cyan
+      visual: 'progress' 
+    },
+    { 
+      label: "Full Stack Dev", 
+      value: "Expert", 
+      accent: "#0047AB", // Deep Cobalt Blue
+      visual: 'flow' 
+    },
+    { 
+      label: "High Performance", 
+      value: "99.9%", 
+      accent: "#6344D4", // Muted Royal Purple
+      visual: 'pulse' 
+    }
+  ];
 
   return (
     <section id="home" className="relative w-full min-h-screen flex items-center pt-32 pb-20 overflow-hidden bg-[var(--color-primary)]">
@@ -143,171 +167,97 @@ export const Hero = () => {
           </div>
 
           <div ref={statsRef} className="flex flex-wrap gap-4 md:gap-8">
-            {/* 📊 CARD 1: PROJECTS DELIVERED */}
-            <motion.div 
-              className="group relative rounded-[2rem] border border-white/5 bg-white/[0.02] backdrop-blur-2xl px-6 md:px-10 py-6 md:py-9 flex flex-col items-start min-w-[160px] md:min-w-[240px] overflow-hidden cursor-pointer"
-              whileHover={{ 
-                y: -10, 
-                scale: 1.02, 
-                rotateX: 4, 
-                rotateY: -2,
-                backgroundColor: "rgba(255, 255, 255, 0.04)",
-                borderColor: "rgba(0, 217, 255, 0.2)"
-              }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              style={{ "--accent": "#00D9FF" } as React.CSSProperties}
-            >
-              {/* Internal Dashboard Lighting */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none">
-                <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/10 via-transparent to-transparent" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.02)_0%,transparent_70%)]" />
-                {/* Grid Overlay */}
-                <div className="absolute inset-0 opacity-20" style={{ 
-                  backgroundImage: 'radial-gradient(var(--accent) 0.5px, transparent 0.5px)', 
-                  backgroundSize: '12px 12px' 
-                }} />
-                {/* Reflection Sweep */}
-                <motion.div 
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.03] to-transparent -translate-x-full"
-                  animate={{ translateX: ["100%", "-100%"] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                />
-              </div>
-
-              <div className="relative z-10 flex flex-col w-full">
-                <div className="flex justify-between items-start mb-6">
-                  <span className="text-3xl md:text-5xl font-black text-white font-heading tracking-tighter group-hover:text-[var(--accent)] group-hover:drop-shadow-[0_0_15px_var(--accent)] transition-all duration-500">25+</span>
-                  <div className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse shadow-[0_0_10px_var(--accent)] mt-2" />
-                </div>
-                <span className="text-[10px] md:text-xs text-white/40 group-hover:text-white/80 uppercase tracking-[0.2em] font-mono font-black transition-colors duration-500">Projects Delivered</span>
-                
-                {/* Purposeful Visual: Progress Beam */}
-                <div className="w-full h-[3px] bg-white/5 mt-8 rounded-full overflow-hidden relative">
+            {stats.map((stat, idx) => (
+              <motion.div 
+                key={idx}
+                className={cn(
+                  "relative group rounded-[1.5rem] border transition-all duration-1000 cursor-pointer flex flex-col items-start min-w-[160px] md:min-w-[240px] px-6 md:px-10 py-6 md:py-9 overflow-hidden",
+                  hoveredStat === idx ? "border-white/20 bg-white/[0.04] z-20" : "border-white/5 bg-white/[0.01] z-10",
+                  hoveredStat !== null && hoveredStat !== idx ? "opacity-30 blur-[1px] scale-[0.98]" : "opacity-100 blur-0 scale-100"
+                )}
+                onMouseEnter={() => setHoveredStat(idx)}
+                onMouseLeave={() => setHoveredStat(null)}
+                animate={{
+                  y: hoveredStat === idx ? -10 : 0,
+                  boxShadow: hoveredStat === idx ? `0 30px 60px -15px ${stat.accent}15` : "none"
+                }}
+                transition={{ type: "spring", stiffness: 200, damping: 30 }}
+                style={{ "--accent": stat.accent } as React.CSSProperties}
+              >
+                {/* 🌌 CINEMATIC INTERNAL LIGHTING */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/5 via-transparent to-transparent" />
+                  {/* Slow Reflection Sweep */}
                   <motion.div 
-                    className="h-full bg-[var(--accent)] shadow-[0_0_15px_var(--accent)]"
-                    initial={{ width: "0%" }}
-                    whileInView={{ width: "85%" }}
-                    transition={{ duration: 1.5, delay: 0.5 }}
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent -translate-x-full"
+                    animate={{ translateX: ["100%", "-100%"] }}
+                    transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
                   />
-                  <motion.div 
-                    className="absolute top-0 left-0 h-full w-20 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-40"
-                    animate={{ x: ["-100%", "400%"] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                  />
+                  {/* Subtle Grid Accent */}
+                  <div className="absolute inset-0 opacity-[0.05]" style={{ 
+                    backgroundImage: 'radial-gradient(var(--accent) 1px, transparent 1px)', 
+                    backgroundSize: '24px 24px' 
+                  }} />
                 </div>
-              </div>
-            </motion.div>
 
-            {/* 💻 CARD 2: FULL STACK DEV */}
-            <motion.div 
-              className="group relative rounded-[2rem] border border-white/5 bg-white/[0.02] backdrop-blur-2xl px-6 md:px-10 py-6 md:py-9 flex flex-col items-start min-w-[160px] md:min-w-[240px] overflow-hidden cursor-pointer"
-              whileHover={{ 
-                y: -10, 
-                scale: 1.02, 
-                rotateX: 4, 
-                rotateY: 2,
-                backgroundColor: "rgba(255, 255, 255, 0.04)",
-                borderColor: "rgba(0, 85, 255, 0.2)"
-              }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              style={{ "--accent": "#0055FF" } as React.CSSProperties}
-            >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none">
-                <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent)]/15 via-transparent to-transparent" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.02)_0%,transparent_70%)]" />
-                {/* Scanning Line */}
-                <motion.div 
-                  className="absolute top-0 left-0 w-full h-[1px] bg-[var(--accent)]/30 blur-[1px]"
-                  animate={{ top: ["0%", "100%", "0%"] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                />
-              </div>
+                {/* Refined Typography */}
+                <div className="relative z-10 w-full">
+                  <div className="flex justify-between items-start mb-6">
+                    <span className="text-3xl md:text-5xl font-black text-white font-heading tracking-tighter transition-all duration-700 group-hover:text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
+                      {stat.value}
+                    </span>
+                    <div className={cn(
+                      "w-1.5 h-1.5 rounded-full transition-all duration-700",
+                      hoveredStat === idx ? "bg-[var(--accent)] shadow-[0_0_10px_var(--accent)] scale-125" : "bg-white/10"
+                    )} />
+                  </div>
+                  <span className="text-[9px] md:text-xs text-white/30 group-hover:text-white/60 uppercase tracking-[0.3em] font-mono font-black transition-colors duration-500">
+                    {stat.label}
+                  </span>
 
-              <div className="relative z-10 flex flex-col w-full">
-                <div className="flex justify-between items-start mb-6">
-                  <span className="text-3xl md:text-5xl font-black text-white font-heading tracking-tighter group-hover:text-[var(--accent)] group-hover:drop-shadow-[0_0_15px_var(--accent)] transition-all duration-500">Full</span>
-                  <div className="flex gap-1 mt-2">
-                    {[0, 1, 2].map(i => (
-                      <div key={i} className="w-1 h-3 rounded-full bg-[var(--accent)] opacity-20 group-hover:opacity-100 group-hover:animate-pulse transition-all" style={{ animationDelay: `${i * 0.2}s` }} />
-                    ))}
+                  {/* Refined Visual Telemetry */}
+                  <div className="mt-10 relative">
+                    {stat.visual === 'progress' && (
+                      <div className="w-full h-[2px] bg-white/[0.03] rounded-full overflow-hidden relative">
+                        <motion.div 
+                          className="h-full bg-[var(--accent)] opacity-40 group-hover:opacity-100 transition-opacity duration-700"
+                          initial={{ width: "0%" }}
+                          whileInView={{ width: "85%" }}
+                          transition={{ duration: 1.5, delay: 0.5 }}
+                        />
+                      </div>
+                    )}
+                    {stat.visual === 'flow' && (
+                      <div className="flex gap-1 items-center h-4 opacity-10 group-hover:opacity-40 transition-opacity duration-700">
+                        {[0, 1, 2, 3, 4, 5].map(i => (
+                          <motion.div 
+                            key={i}
+                            className="w-[2px] h-full bg-[var(--accent)] rounded-full"
+                            animate={{ opacity: [0.2, 1, 0.2] }}
+                            transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+                          />
+                        ))}
+                      </div>
+                    )}
+                    {stat.visual === 'pulse' && (
+                      <div className="flex items-end gap-[2px] h-4 opacity-10 group-hover:opacity-40 transition-opacity duration-700">
+                        {[0, 1, 2, 3, 4, 5, 6, 7].map(i => (
+                          <motion.div 
+                            key={i}
+                            className="w-[2px] bg-[var(--accent)] rounded-full"
+                            animate={{ height: ["4px", "12px", "6px", "14px", "4px"] }}
+                            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.15, ease: "easeInOut" }}
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
-                <span className="text-[10px] md:text-xs text-white/40 group-hover:text-white/80 uppercase tracking-[0.2em] font-mono font-black transition-colors duration-500">Stack Dev</span>
-                
-                {/* Purposeful Visual: Data Flow Indicator */}
-                <div className="flex items-center gap-2 mt-8 h-4">
-                  <div className="flex gap-1 items-end h-full">
-                    {[0, 1, 2, 3].map(i => (
-                      <motion.div 
-                        key={i}
-                        className="w-[3px] bg-[var(--accent)] rounded-full"
-                        animate={{ height: ["4px", "12px", "6px"] }}
-                        transition={{ duration: 1, repeat: Infinity, delay: i * 0.1 }}
-                      />
-                    ))}
-                  </div>
-                  <div className="flex-1 h-[1px] bg-white/10 relative overflow-hidden">
-                    <motion.div 
-                      className="absolute top-0 left-0 h-full w-4 bg-[var(--accent)]"
-                      animate={{ left: ["0%", "100%"] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </motion.div>
 
-            {/* ⚡ CARD 3: HIGH PERFORMANCE */}
-            <motion.div 
-              className="group relative rounded-[2rem] border border-white/5 bg-white/[0.02] backdrop-blur-2xl px-6 md:px-10 py-6 md:py-9 flex flex-col items-start min-w-[160px] md:min-w-[240px] overflow-hidden cursor-pointer"
-              whileHover={{ 
-                y: -10, 
-                scale: 1.02, 
-                rotateX: -4, 
-                rotateY: 0,
-                backgroundColor: "rgba(255, 255, 255, 0.04)",
-                borderColor: "rgba(123, 97, 255, 0.2)"
-              }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              style={{ "--accent": "#7B61FF" } as React.CSSProperties}
-            >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#00D9FF]/10 via-transparent to-[var(--accent)]/10" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.02)_0%,transparent_70%)]" />
-                {/* Holographic Accents */}
-                <div className="absolute top-0 left-0 w-full h-full opacity-10" style={{ 
-                  backgroundImage: 'linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px)',
-                  backgroundSize: '20px 20px'
-                }} />
-              </div>
-
-              <div className="relative z-10 flex flex-col w-full">
-                <div className="flex justify-between items-start mb-6">
-                  <span className="text-3xl md:text-5xl font-black text-white font-heading tracking-tighter group-hover:text-[var(--accent)] group-hover:drop-shadow-[0_0_15px_var(--accent)] transition-all duration-500">High</span>
-                  <div className="relative w-8 h-8 flex items-center justify-center">
-                    <motion.div 
-                      className="absolute inset-0 border border-[var(--accent)] rounded-full opacity-20"
-                      animate={{ scale: [1, 1.4, 1], opacity: [0.1, 0.3, 0.1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    />
-                    <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_10px_var(--accent)]" />
-                  </div>
-                </div>
-                <span className="text-[10px] md:text-xs text-white/40 group-hover:text-white/80 uppercase tracking-[0.2em] font-mono font-black transition-colors duration-500">Performance</span>
-                
-                {/* Purposeful Visual: Pulse Waveform */}
-                <div className="w-full flex items-center justify-between gap-1 mt-8 h-6 opacity-40 group-hover:opacity-100 transition-opacity">
-                  {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-                    <motion.div 
-                      key={i}
-                      className="flex-1 bg-gradient-to-t from-[var(--accent)] to-[#00D9FF] rounded-full"
-                      animate={{ height: ["4px", "16px", "8px", "14px", "4px"] }}
-                      transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.1, ease: "easeInOut" }}
-                    />
-                  ))}
-                </div>
-              </div>
-            </motion.div>
+                {/* Subtle Edge Highlight */}
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+              </motion.div>
+            ))}
           </div>
         </div>
       </div>
