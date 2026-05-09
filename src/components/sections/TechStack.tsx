@@ -89,13 +89,13 @@ const TechIcon = ({
           rotateY: tilt.y,
           scale: isHovered ? 1.25 : (isAnyHovered ? 0.92 : 1),
           z: isHovered ? 150 : 0,
-          filter: isAnyHovered && !isHovered ? "blur(2px) brightness(0.6)" : "blur(0px) brightness(1)",
+          filter: isAnyHovered && !isHovered ? "brightness(0.5)" : "brightness(1)",
           opacity: isAnyHovered && !isHovered ? 0.4 : 1
         }}
         transition={{ type: "spring", stiffness: 400, damping: 20 }}
         className={cn(
           "relative w-16 h-16 md:w-24 md:h-24 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center cursor-pointer overflow-visible group/icon shadow-2xl",
-          isHovered && "border-opacity-100 bg-white/[0.08] backdrop-blur-none"
+          isHovered && "border-opacity-100 bg-white/[0.08]"
         )}
         style={{ 
           borderColor: isHovered ? color : "rgba(255,255,255,0.1)",
@@ -103,7 +103,7 @@ const TechIcon = ({
           transformStyle: "preserve-3d"
         }}
       >
-        {/* Powered On Energy Aura - Tighter radius */}
+        {/* Powered On Energy Aura */}
         <AnimatePresence>
           {isHovered && (
             <motion.div 
@@ -116,7 +116,7 @@ const TechIcon = ({
           )}
         </AnimatePresence>
 
-        {/* Vision Pro Tracking Light - Sharper */}
+        {/* Vision Pro Tracking Light */}
         <div 
           className="absolute inset-0 pointer-events-none opacity-0 group-hover/icon:opacity-100 transition-opacity duration-200 rounded-2xl overflow-hidden"
           style={{
@@ -156,7 +156,7 @@ const TechIcon = ({
         {name}
       </span>
 
-      {/* Holographic HUD Tooltip - CRYSTAL CLEAR */}
+      {/* Holographic HUD Tooltip */}
       <AnimatePresence>
         {isHovered && (
           <motion.div
@@ -229,9 +229,9 @@ const CategoryPanel = ({
       animate={{ 
         rotateX: rotate.x, 
         rotateY: rotate.y,
-        opacity: isAnyHovered && !isCurrentPanelActive ? 0.7 : 1,
-        scale: isAnyHovered && !isCurrentPanelActive ? 0.98 : 1,
-        filter: isAnyHovered && !isCurrentPanelActive ? "blur(1px) brightness(0.7)" : "blur(0px) brightness(1)"
+        opacity: isAnyHovered && !isCurrentPanelActive ? 0.75 : 1,
+        scale: isAnyHovered && !isCurrentPanelActive ? 0.99 : 1,
+        filter: isAnyHovered && !isCurrentPanelActive ? "brightness(0.85)" : "brightness(1)"
       }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className={cn(
@@ -359,12 +359,6 @@ export const TechStack = () => {
 
   return (
     <section ref={containerRef} id="tech-stack" className="py-32 bg-[#030305] relative overflow-visible">
-      {/* Cinematic Focus Overlay - ISOLATED LAYER */}
-      <motion.div 
-        animate={{ opacity: activeTech ? 1 : 0 }}
-        className="absolute inset-0 bg-black/20 backdrop-blur-[1px] z-[30] pointer-events-none"
-      />
-
       {/* Drifting Code Background */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03] select-none font-mono text-xs whitespace-nowrap leading-relaxed flex">
         {[...Array(3)].map((_, j) => (
