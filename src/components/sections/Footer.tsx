@@ -15,8 +15,6 @@ export const Footer = () => {
   const socialLinks = [
     { Icon: FaGithub, href: "https://github.com/rishusharma20" },
     { Icon: FaLinkedin, href: "https://www.linkedin.com/in/rishusharma2007/" },
-    { Icon: FaTwitter, href: "#" },
-    { Icon: FaInstagram, href: "#" },
   ];
 
   const trustMetrics = [
@@ -111,9 +109,9 @@ export const Footer = () => {
           </nav>
 
           {/* RIGHT COLUMN — SOCIAL DOCK */}
-          <div className="flex flex-col items-center lg:items-end justify-center h-full">
-            <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/20 mb-8 lg:text-right">Connect with us</p>
-            <div className="flex gap-4">
+          <div className="flex flex-col items-center justify-center h-full">
+            <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/20 mb-8 text-center">Connect with us</p>
+            <div className="flex gap-6">
               {socialLinks.map(({ Icon, href }, i) => (
                 <motion.a
                   key={i}
