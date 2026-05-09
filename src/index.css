@@ -119,6 +119,11 @@
   .glow-on-hover:hover {
     filter: drop-shadow(0 0 15px rgba(0, 217, 255, 0.4));
   }
+
+  .animate-gradient-slow {
+    animation: gradient 8s linear infinite;
+    background-size: 200% auto;
+  }
 }
 
 /* Custom Scrollbar for Desktop */
@@ -167,4 +172,10 @@ html.lenis, html.lenis body {
 
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
+}
+
+@keyframes gradient {
+  0% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+  100% { background-position: 0% center; }
 }
