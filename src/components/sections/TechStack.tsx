@@ -2,76 +2,167 @@ import React, { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "../../utils/helpers";
 
-const TechIcon = ({ name, icon, invert, color, description }: { name: string; icon: string; invert?: boolean; color: string; description: string }) => {
+const TechIcon = ({ 
+  name, 
+  icon, 
+  invert, 
+  color, 
+  description,
+  isAnyHovered,
+  onHoverChange
+}: { 
+  name: string; 
+  icon: string; 
+  invert?: boolean; 
+  color: string; 
+  description: string;
+  isAnyHovered: boolean;
+  onHoverChange: (hovered: boolean) => void;
+}) => {
   const [isHovered, setIsHovered] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setMousePos({ x, y });
+
+    // Calculate tilt
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const tiltX = (y - centerY) / 10;
+    const tiltY = (centerX - x) / 10;
+    setTilt({ x: tiltX, y: tiltY });
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    onHoverChange(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    onHoverChange(false);
+    setTilt({ x: 0, y: 0 });
+  };
+
+  // Icon Specific Animation Logic
+  const renderIconEffect = () => {
+    if (!isHovered) return null;
+    
+    switch(name) {
+      case "React":
+        return (
+          <motion.div 
+            className="absolute inset-0 border border-cyan-400 rounded-full opacity-20"
+            animate={{ rotate: 360, scale: [1, 1.1, 1] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+          />
+        );
+      case "Next.js":
+        return (
+          <motion.div 
+            className="absolute inset-0 border-t border-white rounded-full opacity-30"
+            animate={{ rotate: -360 }}
+            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+          />
+        );
+      case "Three.js":
+        return (
+          <motion.div 
+            className="absolute inset-0 bg-white/5"
+            animate={{ opacity: [0.1, 0.3, 0.1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="relative flex flex-col items-center gap-3">
       <motion.div
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onMouseMove={(e) => {
-          const rect = e.currentTarget.getBoundingClientRect();
-          setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onMouseMove={handleMouseMove}
+        animate={{ 
+          rotateX: tilt.x, 
+          rotateY: tilt.y,
+          scale: isHovered ? 1.15 : 1,
+          z: isHovered ? 50 : 0
         }}
-        whileHover={{ scale: 1.15, rotate: 5 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
         className={cn(
-          "relative w-14 h-14 md:w-20 md:h-20 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center transition-all duration-500 cursor-pointer overflow-hidden group/icon",
-          isHovered && "border-opacity-50"
+          "relative w-16 h-16 md:w-24 md:h-24 rounded-2xl bg-white/[0.03] backdrop-blur-md border border-white/10 flex items-center justify-center transition-all duration-500 cursor-pointer overflow-hidden group/icon shadow-2xl",
+          isAnyHovered && !isHovered ? "opacity-30 blur-[1px]" : "opacity-100 blur-0",
+          isHovered && "border-opacity-100"
         )}
-        style={{ borderColor: isHovered ? color : "rgba(255,255,255,0.1)" }}
+        style={{ 
+          borderColor: isHovered ? color : "rgba(255,255,255,0.1)",
+          boxShadow: isHovered ? `0 0 30px ${color}33` : "none",
+          transformStyle: "preserve-3d"
+        }}
       >
-        {/* Holographic Shine */}
-        <AnimatePresence>
-          {isHovered && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background: `radial-gradient(circle at ${mousePos.x}px ${mousePos.y}px, ${color}33, transparent 70%)`,
-              }}
-            />
-          )}
-        </AnimatePresence>
+        {/* Apple Vision Pro Tracking Light */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-0 group-hover/icon:opacity-100 transition-opacity duration-300"
+          style={{
+            background: `radial-gradient(circle at ${mousePos.x}px ${mousePos.y}px, ${color}44, transparent 70%)`,
+          }}
+        />
 
-        <div className="absolute inset-0 pointer-events-none opacity-0 group-hover/icon:opacity-20 transition-opacity duration-1000">
-          <div className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white to-transparent skew-x-[-25deg] animate-[sweep_2s_infinite]" />
-        </div>
+        {/* Holographic Reflection Sweep */}
+        <motion.div 
+          className="absolute inset-0 pointer-events-none opacity-0 group-hover/icon:opacity-20"
+          animate={isHovered ? { x: ["-100%", "200%"] } : {}}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+          style={{ background: "linear-gradient(90deg, transparent, white, transparent)" }}
+        />
+
+        {renderIconEffect()}
 
         <img 
           src={icon} 
           alt={name} 
           className={cn(
-            "w-7 h-7 md:w-10 md:h-10 transition-all duration-500 relative z-10",
+            "w-8 h-8 md:w-12 md:h-12 transition-all duration-500 relative z-10",
             invert && "invert opacity-80",
-            isHovered ? "drop-shadow-[0_0_10px_" + color + "]" : ""
+            isHovered ? "drop-shadow-[0_0_15px_" + color + "]" : ""
           )}
+          style={{ transform: "translateZ(30px)" }}
         />
+        
+        {/* Animated Grid Lines */}
+        <div className="absolute inset-0 opacity-[0.05] pointer-events-none bg-[linear-gradient(rgba(255,255,255,.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.1)_1px,transparent_1px)] bg-[size:10px_10px]" />
       </motion.div>
 
       <span className={cn(
-        "font-mono text-[10px] md:text-xs tracking-wider transition-colors duration-300",
-        isHovered ? "text-white" : "text-white/40"
+        "font-mono text-[10px] md:text-xs tracking-[0.2em] transition-all duration-300 uppercase font-bold",
+        isHovered ? "text-white text-glow" : "text-white/30"
       )}>
         {name}
       </span>
 
-      {/* Holographic Tooltip */}
+      {/* Holographic HUD Tooltip */}
       <AnimatePresence>
         {isHovered && (
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.9 }}
+            initial={{ opacity: 0, y: 15, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.9 }}
-            className="absolute -top-16 left-1/2 -translate-x-1/2 w-48 z-50 pointer-events-none"
+            exit={{ opacity: 0, y: 15, scale: 0.8 }}
+            className="absolute -top-24 left-1/2 -translate-x-1/2 w-56 z-50 pointer-events-none"
           >
-            <div className="glass px-4 py-2 rounded-lg border border-white/20 shadow-2xl relative">
-              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-white/20" />
-              <p className="text-[10px] font-mono text-white leading-tight text-center">
-                {description}
+            <div className="bg-black/60 backdrop-blur-xl px-5 py-3 rounded-xl border border-cyan-400/30 shadow-[0_0_40px_rgba(0,0,0,0.5)] relative overflow-hidden group">
+              {/* Tooltip Corner Accents */}
+              <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-cyan-400" />
+              <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-cyan-400" />
+              
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/5 to-transparent" />
+              <p className="text-[11px] font-mono text-white leading-relaxed text-center relative z-10 font-bold uppercase tracking-wider">
+                <span className="text-cyan-400">SYS_INFO:</span> {description}
               </p>
             </div>
           </motion.div>
@@ -98,13 +189,14 @@ const CategoryPanel = ({
 }) => {
   const panelRef = useRef<HTMLDivElement>(null);
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
+  const [isAnyHovered, setIsAnyHovered] = useState(false);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!panelRef.current) return;
     const rect = panelRef.current.getBoundingClientRect();
     const x = (e.clientY - rect.top) / rect.height - 0.5;
     const y = (e.clientX - rect.left) / rect.width - 0.5;
-    setRotate({ x: x * -10, y: y * 10 });
+    setRotate({ x: x * -12, y: y * 12 });
   };
 
   return (
@@ -115,39 +207,54 @@ const CategoryPanel = ({
       animate={{ rotateX: rotate.x, rotateY: rotate.y }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className={cn(
-        "glass rounded-[2.5rem] p-8 md:p-12 relative group overflow-hidden border border-white/5",
+        "bg-white/[0.01] backdrop-blur-sm rounded-[2.5rem] p-10 md:p-14 relative group overflow-hidden border border-white/5 transition-all duration-700",
+        isAnyHovered ? "border-white/20 bg-white/[0.03]" : "border-white/5",
         className
       )}
-      style={{ perspective: "1000px" }}
+      style={{ perspective: "1500px", transformStyle: "preserve-3d" }}
     >
       {/* HUD status */}
-      <div className="absolute top-6 right-8 flex items-center gap-2">
-        <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: color }} />
-        <span className="text-[9px] font-mono tracking-widest uppercase text-white/40">{status}</span>
+      <div className="absolute top-8 right-10 flex items-center gap-2 z-20">
+        <div className="w-2 h-2 rounded-full animate-pulse shadow-[0_0_10px_currentColor]" style={{ backgroundColor: color, color }} />
+        <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-white/50">{status}</span>
       </div>
 
-      <div className="relative z-10">
-        <h3 className="text-2xl md:text-3xl font-heading font-black text-white mb-10 tracking-tight flex items-center gap-4">
-          <div className="w-8 h-[2px]" style={{ backgroundColor: color }} />
+      <div className="relative z-10" style={{ transform: "translateZ(40px)" }}>
+        <h3 className="text-3xl md:text-4xl font-heading font-black text-white mb-12 tracking-tight flex items-center gap-5">
+          <div className="w-10 h-[2px] shadow-[0_0_15px_currentColor]" style={{ backgroundColor: color, color }} />
           {title}
         </h3>
 
-        <div className="flex flex-wrap justify-center gap-x-6 gap-y-10 md:gap-x-10">
+        <div className="flex flex-wrap justify-center gap-x-10 gap-y-12 md:gap-x-14">
           {techs.map((tech, i) => (
-            <TechIcon key={i} {...tech} color={color} />
+            <TechIcon 
+              key={i} 
+              {...tech} 
+              color={color} 
+              isAnyHovered={isAnyHovered}
+              onHoverChange={setIsAnyHovered}
+            />
           ))}
         </div>
       </div>
 
-      {/* Background Visual */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03] group-hover:opacity-[0.07] transition-opacity duration-700 overflow-hidden">
+      {/* Interactive Light Surface */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
+        style={{
+          background: `radial-gradient(circle at 50% 50%, ${color}05 0%, transparent 70%)`
+        }}
+      />
+
+      {/* Holographic Grid Visual */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.05] group-hover:opacity-[0.1] transition-opacity duration-700 overflow-hidden">
         {Visual && <Visual color={color} />}
       </div>
 
-      {/* Border Glow */}
+      {/* Border Glow System */}
       <div 
-        className="absolute inset-px rounded-[2.5rem] pointer-events-none transition-opacity duration-500 opacity-0 group-hover:opacity-100"
-        style={{ boxShadow: `inset 0 0 40px ${color}1a, 0 0 20px ${color}1a` }}
+        className="absolute inset-0 rounded-[2.5rem] pointer-events-none transition-all duration-700 opacity-0 group-hover:opacity-100 border border-white/10"
+        style={{ boxShadow: `inset 0 0 60px ${color}11, 0 0 30px ${color}08` }}
       />
     </motion.div>
   );
