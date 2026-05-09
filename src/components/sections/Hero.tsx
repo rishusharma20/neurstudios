@@ -155,17 +155,132 @@ export const Hero = () => {
             </Magnetic>
           </div>
 
-          <div ref={statsRef} className="flex flex-wrap gap-4 md:gap-8">
-            {[
-              { value: "25+", label: "Projects Delivered" },
-              { value: "Full-Stack", label: "Development" },
-              { value: "Performance", label: "Optimized" },
-            ].map((stat, i) => (
-              <div key={i} className="glass px-6 py-4 rounded-xl flex flex-col items-start min-w-[160px]">
-                <span className="text-xl md:text-2xl font-bold text-white font-heading">{stat.value}</span>
-                <span className="text-xs text-[var(--color-cyan)] mt-1 uppercase tracking-wider">{stat.label}</span>
+          <div ref={statsRef} className="flex flex-wrap gap-6 md:gap-8">
+            {/* STAT CARD 1: PROJECTS DELIVERED */}
+            <motion.div 
+              className="group relative glass px-8 py-6 rounded-2xl flex flex-col items-start min-w-[180px] overflow-hidden cursor-default"
+              whileHover={{ y: -8, scale: 1.05, rotateX: 5, rotateY: -5 }}
+              transition={{ type: "spring", stiffness: 400, damping: 20 }}
+            >
+              {/* Background Glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-cyan)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              
+              {/* Micro-Visual: Success Pulse */}
+              <div className="absolute top-4 right-4">
+                <motion.div 
+                  className="w-2 h-2 bg-[var(--color-cyan)] rounded-full"
+                  animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+                <motion.div 
+                  className="absolute inset-0 w-2 h-2 border border-[var(--color-cyan)] rounded-full"
+                  animate={{ scale: [1, 3, 1], opacity: [1, 0, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
               </div>
-            ))}
+
+              {/* Light Sweep */}
+              <div className="absolute inset-0 pointer-events-none">
+                <motion.div 
+                  className="w-1/2 h-full bg-gradient-to-r from-transparent via-white/5 to-transparent -skew-x-12"
+                  animate={{ x: ["-100%", "200%"] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+                />
+              </div>
+
+              <span className="text-3xl font-bold text-white font-heading relative z-10 group-hover:text-[var(--color-cyan)] transition-colors">25+</span>
+              <span className="text-[10px] text-[var(--color-cyan)] mt-2 uppercase tracking-[0.2em] font-mono relative z-10">Projects Delivered</span>
+              
+              {/* Progress Bar Micro-Visual */}
+              <div className="w-full h-[2px] bg-white/10 mt-4 rounded-full overflow-hidden">
+                <motion.div 
+                  className="h-full bg-[var(--color-cyan)] shadow-[0_0_10px_rgba(0,217,255,0.5)]"
+                  initial={{ width: "0%" }}
+                  animate={{ width: "85%" }}
+                  transition={{ duration: 1.5, delay: 1 }}
+                />
+              </div>
+            </motion.div>
+
+            {/* STAT CARD 2: FULL-STACK */}
+            <motion.div 
+              className="group relative glass px-8 py-6 rounded-2xl flex flex-col items-start min-w-[180px] overflow-hidden cursor-default"
+              whileHover={{ y: -8, scale: 1.05, rotateX: 5, rotateY: 5 }}
+              transition={{ type: "spring", stiffness: 400, damping: 20 }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[#0055FF]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              
+              {/* Micro-Visual: Data Connection Nodes */}
+              <div className="absolute top-4 right-4 flex gap-1">
+                {[0, 1, 2].map(i => (
+                  <motion.div 
+                    key={i}
+                    className="w-1 h-3 bg-[var(--color-cyan)]/30 rounded-full"
+                    animate={{ height: [4, 12, 4], opacity: [0.3, 1, 0.3] }}
+                    transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
+                  />
+                ))}
+              </div>
+
+              <span className="text-3xl font-bold text-white font-heading relative z-10 group-hover:text-[var(--color-cyan)] transition-colors">Full-Stack</span>
+              <span className="text-[10px] text-[var(--color-cyan)] mt-2 uppercase tracking-[0.2em] font-mono relative z-10">Development</span>
+
+              {/* Data Stream Micro-Visual */}
+              <div className="flex gap-2 mt-4 opacity-40">
+                <div className="w-8 h-[1px] bg-[var(--color-cyan)]" />
+                <motion.div 
+                  className="w-1 h-1 bg-[var(--color-cyan)] rounded-full"
+                  animate={{ x: [0, 40, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <div className="w-8 h-[1px] bg-white/20" />
+              </div>
+            </motion.div>
+
+            {/* STAT CARD 3: PERFORMANCE */}
+            <motion.div 
+              className="group relative glass px-8 py-6 rounded-2xl flex flex-col items-start min-w-[180px] overflow-hidden cursor-default"
+              whileHover={{ y: -8, scale: 1.05, rotateX: -5, rotateY: 0 }}
+              transition={{ type: "spring", stiffness: 400, damping: 20 }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-cyan)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              
+              {/* Micro-Visual: Performance Meter */}
+              <div className="absolute top-6 right-6">
+                <svg width="24" height="24" viewBox="0 0 24 24" className="overflow-visible">
+                  <motion.circle 
+                    cx="12" cy="12" r="10" 
+                    fill="none" 
+                    stroke="rgba(0,217,255,0.1)" 
+                    strokeWidth="2" 
+                  />
+                  <motion.circle 
+                    cx="12" cy="12" r="10" 
+                    fill="none" 
+                    stroke="var(--color-cyan)" 
+                    strokeWidth="2" 
+                    strokeDasharray="62.8"
+                    animate={{ strokeDashoffset: [62.8, 10, 62.8] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  />
+                </svg>
+              </div>
+
+              <span className="text-3xl font-bold text-white font-heading relative z-10 group-hover:text-[var(--color-cyan)] transition-colors">Speed</span>
+              <span className="text-[10px] text-[var(--color-cyan)] mt-2 uppercase tracking-[0.2em] font-mono relative z-10">Optimized</span>
+
+              {/* Waveform Micro-Visual */}
+              <div className="flex items-end gap-1 mt-4 h-4">
+                {[0, 1, 2, 3, 4].map(i => (
+                  <motion.div 
+                    key={i}
+                    className="w-[2px] bg-[var(--color-cyan)]"
+                    animate={{ height: [2, 12, 2] }}
+                    transition={{ duration: 1, repeat: Infinity, delay: i * 0.15 }}
+                  />
+                ))}
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>
