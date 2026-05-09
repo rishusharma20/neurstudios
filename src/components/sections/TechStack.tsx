@@ -8,18 +8,21 @@ const TechIcon = ({
   invert, 
   color, 
   description,
+  isHovered,
   isAnyHovered,
-  onHoverChange
+  onHoverStart,
+  onHoverEnd
 }: { 
   name: string; 
   icon: string; 
   invert?: boolean; 
   color: string; 
   description: string;
+  isHovered: boolean;
   isAnyHovered: boolean;
-  onHoverChange: (hovered: boolean) => void;
+  onHoverStart: () => void;
+  onHoverEnd: () => void;
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
 
@@ -29,26 +32,13 @@ const TechIcon = ({
     const y = e.clientY - rect.top;
     setMousePos({ x, y });
 
-    // Calculate tilt
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    const tiltX = (y - centerY) / 10;
-    const tiltY = (centerX - x) / 10;
+    const tiltX = (y - centerY) / 8;
+    const tiltY = (centerX - x) / 8;
     setTilt({ x: tiltX, y: tiltY });
   };
 
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-    onHoverChange(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    onHoverChange(false);
-    setTilt({ x: 0, y: 0 });
-  };
-
-  // Icon Specific Animation Logic
   const renderIconEffect = () => {
     if (!isHovered) return null;
     
@@ -56,15 +46,15 @@ const TechIcon = ({
       case "React":
         return (
           <motion.div 
-            className="absolute inset-0 border border-cyan-400 rounded-full opacity-20"
-            animate={{ rotate: 360, scale: [1, 1.1, 1] }}
+            className="absolute inset-0 border border-cyan-400 rounded-full opacity-30"
+            animate={{ rotate: 360, scale: [1, 1.2, 1] }}
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
           />
         );
       case "Next.js":
         return (
           <motion.div 
-            className="absolute inset-0 border-t border-white rounded-full opacity-30"
+            className="absolute inset-0 border-t border-white rounded-full opacity-40 shadow-[0_0_15px_rgba(255,255,255,0.3)]"
             animate={{ rotate: -360 }}
             transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
           />
@@ -72,8 +62,8 @@ const TechIcon = ({
       case "Three.js":
         return (
           <motion.div 
-            className="absolute inset-0 bg-white/5"
-            animate={{ opacity: [0.1, 0.3, 0.1] }}
+            className="absolute inset-0 bg-white/10 blur-sm"
+            animate={{ opacity: [0.1, 0.4, 0.1] }}
             transition={{ duration: 2, repeat: Infinity }}
           />
         );
@@ -85,36 +75,53 @@ const TechIcon = ({
   return (
     <div className="relative flex flex-col items-center gap-3">
       <motion.div
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onMouseEnter={onHoverStart}
+        onMouseLeave={() => {
+          onHoverEnd();
+          setTilt({ x: 0, y: 0 });
+        }}
         onMouseMove={handleMouseMove}
         animate={{ 
           rotateX: tilt.x, 
           rotateY: tilt.y,
-          scale: isHovered ? 1.15 : 1,
-          z: isHovered ? 50 : 0
+          scale: isHovered ? 1.25 : (isAnyHovered ? 0.9 : 1),
+          z: isHovered ? 100 : 0,
+          filter: isAnyHovered && !isHovered ? "blur(4px) brightness(0.5)" : "blur(0px) brightness(1)",
+          opacity: isAnyHovered && !isHovered ? 0.4 : 1
         }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        transition={{ type: "spring", stiffness: 350, damping: 25 }}
         className={cn(
-          "relative w-16 h-16 md:w-24 md:h-24 rounded-2xl bg-white/[0.03] backdrop-blur-md border border-white/10 flex items-center justify-center transition-all duration-500 cursor-pointer overflow-hidden group/icon shadow-2xl",
-          isAnyHovered && !isHovered ? "opacity-30 blur-[1px]" : "opacity-100 blur-0",
-          isHovered && "border-opacity-100"
+          "relative w-16 h-16 md:w-24 md:h-24 rounded-2xl bg-white/[0.03] backdrop-blur-md border border-white/10 flex items-center justify-center cursor-pointer overflow-visible group/icon shadow-2xl",
+          isHovered && "border-opacity-100 z-50"
         )}
         style={{ 
           borderColor: isHovered ? color : "rgba(255,255,255,0.1)",
-          boxShadow: isHovered ? `0 0 30px ${color}33` : "none",
+          boxShadow: isHovered ? `0 0 50px ${color}44, inset 0 0 20px ${color}22` : "none",
           transformStyle: "preserve-3d"
         }}
       >
+        {/* Powered On Energy Aura */}
+        <AnimatePresence>
+          {isHovered && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1.2 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              className="absolute inset-[-20%] rounded-3xl blur-2xl -z-10"
+              style={{ background: `radial-gradient(circle, ${color}33 0%, transparent 70%)` }}
+            />
+          )}
+        </AnimatePresence>
+
         {/* Apple Vision Pro Tracking Light */}
         <div 
-          className="absolute inset-0 pointer-events-none opacity-0 group-hover/icon:opacity-100 transition-opacity duration-300"
+          className="absolute inset-0 pointer-events-none opacity-0 group-hover/icon:opacity-100 transition-opacity duration-300 rounded-2xl overflow-hidden"
           style={{
             background: `radial-gradient(circle at ${mousePos.x}px ${mousePos.y}px, ${color}44, transparent 70%)`,
           }}
         />
 
-        {/* Holographic Reflection Sweep */}
+        {/* Shimmer Sweep */}
         <motion.div 
           className="absolute inset-0 pointer-events-none opacity-0 group-hover/icon:opacity-20"
           animate={isHovered ? { x: ["-100%", "200%"] } : {}}
@@ -130,18 +137,18 @@ const TechIcon = ({
           className={cn(
             "w-8 h-8 md:w-12 md:h-12 transition-all duration-500 relative z-10",
             invert && "invert opacity-80",
-            isHovered ? "drop-shadow-[0_0_15px_" + color + "]" : ""
+            isHovered ? "drop-shadow-[0_0_20px_" + color + "]" : ""
           )}
-          style={{ transform: "translateZ(30px)" }}
+          style={{ transform: "translateZ(40px)" }}
         />
         
-        {/* Animated Grid Lines */}
-        <div className="absolute inset-0 opacity-[0.05] pointer-events-none bg-[linear-gradient(rgba(255,255,255,.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.1)_1px,transparent_1px)] bg-[size:10px_10px]" />
+        {/* Animated HUD Grid */}
+        <div className="absolute inset-0 opacity-[0.05] pointer-events-none bg-[linear-gradient(rgba(255,255,255,.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.1)_1px,transparent_1px)] bg-[size:12px_12px] rounded-2xl" />
       </motion.div>
 
       <span className={cn(
-        "font-mono text-[10px] md:text-xs tracking-[0.2em] transition-all duration-300 uppercase font-bold",
-        isHovered ? "text-white text-glow" : "text-white/30"
+        "font-mono text-[10px] md:text-xs tracking-[0.3em] transition-all duration-500 uppercase font-bold",
+        isHovered ? "text-white opacity-100 translate-y-1" : (isAnyHovered ? "opacity-0" : "text-white/30")
       )}>
         {name}
       </span>
@@ -150,20 +157,25 @@ const TechIcon = ({
       <AnimatePresence>
         {isHovered && (
           <motion.div
-            initial={{ opacity: 0, y: 15, scale: 0.8 }}
+            initial={{ opacity: 0, y: 20, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 15, scale: 0.8 }}
-            className="absolute -top-24 left-1/2 -translate-x-1/2 w-56 z-50 pointer-events-none"
+            exit={{ opacity: 0, y: 20, scale: 0.8 }}
+            className="absolute -top-28 left-1/2 -translate-x-1/2 w-64 z-50 pointer-events-none"
           >
-            <div className="bg-black/60 backdrop-blur-xl px-5 py-3 rounded-xl border border-cyan-400/30 shadow-[0_0_40px_rgba(0,0,0,0.5)] relative overflow-hidden group">
-              {/* Tooltip Corner Accents */}
-              <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-cyan-400" />
-              <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-cyan-400" />
+            <div className="bg-black/80 backdrop-blur-2xl px-6 py-4 rounded-xl border border-cyan-400/40 shadow-[0_0_50px_rgba(0,0,0,0.8)] relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-cyan-400" />
+              <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-cyan-400" />
               
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/5 to-transparent" />
-              <p className="text-[11px] font-mono text-white leading-relaxed text-center relative z-10 font-bold uppercase tracking-wider">
-                <span className="text-cyan-400">SYS_INFO:</span> {description}
-              </p>
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/10 to-transparent" />
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                  <span className="text-[9px] font-mono text-cyan-400 uppercase tracking-[0.2em] font-bold">NODE_INFO_ACTIVE</span>
+                </div>
+                <p className="text-[11px] font-mono text-white leading-relaxed text-center uppercase tracking-wider font-medium">
+                  {description}
+                </p>
+              </div>
             </div>
           </motion.div>
         )}
@@ -178,7 +190,10 @@ const CategoryPanel = ({
   status, 
   techs, 
   className,
-  visual: Visual 
+  visual: Visual,
+  activeTech,
+  isAnyHovered,
+  onTechHover
 }: { 
   title: string; 
   color: string; 
@@ -186,17 +201,19 @@ const CategoryPanel = ({
   techs: any[]; 
   className?: string;
   visual?: any;
+  activeTech: string | null;
+  isAnyHovered: boolean;
+  onTechHover: (name: string | null) => void;
 }) => {
   const panelRef = useRef<HTMLDivElement>(null);
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
-  const [isAnyHovered, setIsAnyHovered] = useState(false);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!panelRef.current) return;
     const rect = panelRef.current.getBoundingClientRect();
     const x = (e.clientY - rect.top) / rect.height - 0.5;
     const y = (e.clientX - rect.left) / rect.width - 0.5;
-    setRotate({ x: x * -12, y: y * 12 });
+    setRotate({ x: x * -10, y: y * 10 });
   };
 
   return (
@@ -204,11 +221,17 @@ const CategoryPanel = ({
       ref={panelRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => setRotate({ x: 0, y: 0 })}
-      animate={{ rotateX: rotate.x, rotateY: rotate.y }}
+      animate={{ 
+        rotateX: rotate.x, 
+        rotateY: rotate.y,
+        opacity: isAnyHovered && !techs.find(t => t.name === activeTech) ? 0.6 : 1,
+        scale: isAnyHovered && !techs.find(t => t.name === activeTech) ? 0.98 : 1,
+        filter: isAnyHovered && !techs.find(t => t.name === activeTech) ? "blur(2px)" : "blur(0px)"
+      }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className={cn(
         "bg-white/[0.01] backdrop-blur-sm rounded-[2.5rem] p-10 md:p-14 relative group overflow-hidden border border-white/5 transition-all duration-700",
-        isAnyHovered ? "border-white/20 bg-white/[0.03]" : "border-white/5",
+        isAnyHovered && techs.find(t => t.name === activeTech) ? "border-white/20 bg-white/[0.03]" : "border-white/5",
         className
       )}
       style={{ perspective: "1500px", transformStyle: "preserve-3d" }}
@@ -231,27 +254,19 @@ const CategoryPanel = ({
               key={i} 
               {...tech} 
               color={color} 
+              isHovered={activeTech === tech.name}
               isAnyHovered={isAnyHovered}
-              onHoverChange={setIsAnyHovered}
+              onHoverStart={() => onTechHover(tech.name)}
+              onHoverEnd={() => onTechHover(null)}
             />
           ))}
         </div>
       </div>
 
-      {/* Interactive Light Surface */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
-        style={{
-          background: `radial-gradient(circle at 50% 50%, ${color}05 0%, transparent 70%)`
-        }}
-      />
-
-      {/* Holographic Grid Visual */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.05] group-hover:opacity-[0.1] transition-opacity duration-700 overflow-hidden">
         {Visual && <Visual color={color} />}
       </div>
 
-      {/* Border Glow System */}
       <div 
         className="absolute inset-0 rounded-[2.5rem] pointer-events-none transition-all duration-700 opacity-0 group-hover:opacity-100 border border-white/10"
         style={{ boxShadow: `inset 0 0 60px ${color}11, 0 0 30px ${color}08` }}
@@ -262,6 +277,7 @@ const CategoryPanel = ({
 
 export const TechStack = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [activeTech, setActiveTech] = useState<string | null>(null);
 
   const categories = [
     {
@@ -338,6 +354,12 @@ export const TechStack = () => {
 
   return (
     <section ref={containerRef} id="tech-stack" className="py-32 bg-[#030305] relative overflow-hidden">
+      {/* Cinematic Focus Overlay */}
+      <motion.div 
+        animate={{ opacity: activeTech ? 1 : 0 }}
+        className="absolute inset-0 bg-black/60 backdrop-blur-[2px] z-20 pointer-events-none"
+      />
+
       {/* Drifting Code Background */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03] select-none font-mono text-xs whitespace-nowrap leading-relaxed flex">
         {[...Array(3)].map((_, j) => (
@@ -378,7 +400,13 @@ export const TechStack = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
           {categories.map((cat, i) => (
-            <CategoryPanel key={i} {...cat} />
+            <CategoryPanel 
+              key={i} 
+              {...cat} 
+              activeTech={activeTech} 
+              isAnyHovered={!!activeTech} 
+              onTechHover={setActiveTech} 
+            />
           ))}
 
           {/* CLOUD & TOOLS - Large horizontal panel */}
@@ -387,6 +415,9 @@ export const TechStack = () => {
             color="#FF6B6B" 
             status="DEPLOYMENT READY" 
             className="md:col-span-2"
+            activeTech={activeTech}
+            isAnyHovered={!!activeTech}
+            onTechHover={setActiveTech}
             techs={[
               { name: "Docker", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg", description: "Containerized application scaling" },
               { name: "GitHub", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg", invert: true, description: "Version control & collaboration" },
