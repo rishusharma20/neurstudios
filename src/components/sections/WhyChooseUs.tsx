@@ -1,86 +1,29 @@
 import { useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { TrendingUp, Zap, Users, Layout, Layers } from 'lucide-react';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { TrendingUp, Zap, Users, Palette, Activity, Shield } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 
-// --- MICRO-VISUAL COMPONENTS ---
-
-const ArchitectureVisual = () => (
-  <div className="absolute inset-0 flex items-center justify-center opacity-30 group-hover:opacity-60 transition-opacity duration-700">
-    <div className="relative w-full h-full max-h-[150px] overflow-hidden">
-      <svg className="w-full h-full" viewBox="0 0 400 150">
-        <path d="M 0 100 Q 50 80, 100 110 T 200 60 T 300 90 T 400 40" fill="none" stroke="var(--color-cyan)" strokeWidth="2" strokeDasharray="1000" strokeDashoffset="0" className="animate-draw" />
-        {[50, 100, 200, 300].map((x, i) => (
-          <circle key={i} cx={x} cy={70 + Math.sin(i) * 30} r="3" fill="var(--color-cyan)" className="animate-pulse" />
-        ))}
-      </svg>
-    </div>
-  </div>
-);
-
-const AestheticVisual = () => (
-  <div className="absolute inset-0 overflow-hidden opacity-20 group-hover:opacity-40 transition-opacity duration-700">
-    <div className="grid grid-cols-6 gap-2 p-4">
-      {Array.from({ length: 18 }).map((_, i) => (
-        <div key={i} className="h-12 border border-[var(--color-purple)]/30 rounded-lg flex items-center justify-center">
-          <Layers size={14} className="text-[var(--color-purple)]" />
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
-const PerformanceVisual = () => (
-  <div className="absolute inset-0 flex items-center justify-center opacity-30 group-hover:opacity-50 transition-opacity duration-700">
-    <div className="relative w-24 h-24">
-      <svg className="w-full h-full rotate-[-90deg]">
-        <circle cx="48" cy="48" r="40" stroke="rgba(0, 255, 136, 0.1)" strokeWidth="4" fill="none" />
-        <motion.circle 
-          cx="48" cy="48" r="40" stroke="var(--color-green, #00FF88)" strokeWidth="4" fill="none" 
-          strokeDasharray="251" strokeDashoffset="50"
-          animate={{ strokeDashoffset: [251, 60] }}
-          transition={{ duration: 2, ease: "easeOut" }}
-        />
-      </svg>
-      <div className="absolute inset-0 flex items-center justify-center flex-col">
-        <span className="text-[var(--color-green, #00FF88)] font-mono text-xs font-bold">99.9%</span>
-        <span className="text-[8px] text-white/40 uppercase font-mono">Uptime</span>
-      </div>
-    </div>
-  </div>
-);
-
-const CollaborationVisual = () => (
-  <div className="absolute inset-0 opacity-20 group-hover:opacity-40 transition-opacity duration-700">
-    <svg className="w-full h-full">
-      <line x1="20%" y1="20%" x2="80%" y2="80%" stroke="var(--color-cyan)" strokeWidth="1" strokeDasharray="5 5" />
-      <line x1="80%" y1="20%" x2="20%" y2="80%" stroke="var(--color-cyan)" strokeWidth="1" strokeDasharray="5 5" />
-      <circle cx="50%" cy="50%" r="20" fill="none" stroke="var(--color-cyan)" strokeWidth="1" />
-    </svg>
-  </div>
-);
-
-const AdvantageCard = ({ 
+const BentoCard = ({ 
   title, 
   desc, 
-  icon: Icon, 
-  visual: Visual, 
   stats, 
-  className,
+  icon: Icon, 
+  className, 
+  children,
   delay = 0 
 }: { 
   title: string; 
   desc: string; 
-  icon: any; 
-  visual: any; 
   stats?: string;
-  className?: string;
+  icon: any; 
+  className?: string; 
+  children?: React.ReactNode;
   delay?: number;
 }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const cardRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
     setMousePos({
@@ -96,42 +39,46 @@ const AdvantageCard = ({
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.8, delay }}
       className={cn(
-        "group relative glass rounded-[2.5rem] p-8 md:p-10 border border-white/5 overflow-hidden transition-all duration-500 hover:border-[var(--color-cyan)]/30 hover:-translate-y-2",
+        "group relative overflow-hidden rounded-[2rem] border border-white/5 bg-[#0A0A12]/60 backdrop-blur-xl p-8 transition-all duration-500 hover:border-[var(--color-cyan)]/30",
         className
       )}
     >
-      {/* Interactive Spotlight Overlay */}
+      {/* Spotlight Effect */}
       <div 
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        className="pointer-events-none absolute -inset-px opacity-0 transition duration-500 group-hover:opacity-100"
         style={{
-          background: `radial-gradient(circle at ${mousePos.x}px ${mousePos.y}px, rgba(0, 217, 255, 0.15) 0%, transparent 50%)`
+          background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(0, 217, 255, 0.08), transparent 40%)`,
         }}
       />
 
+      {/* Inner Light Sweep */}
+      <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-10 transition-opacity duration-1000">
+        <div className="absolute top-0 -left-full w-1/2 h-full bg-gradient-to-r from-transparent via-white to-transparent skew-x-[-25deg] animate-[sweep_3s_infinite]" />
+      </div>
+
       <div className="relative z-10 h-full flex flex-col">
-        <div className="flex items-start justify-between mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-[var(--color-cyan)] group-hover:bg-[var(--color-cyan)]/10 group-hover:scale-110 transition-all duration-500">
-            <Icon size={28} />
+        <div className="flex items-start justify-between mb-6">
+          <div className="w-12 h-12 rounded-xl bg-[var(--color-cyan)]/10 border border-[var(--color-cyan)]/20 flex items-center justify-center text-[var(--color-cyan)] group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
+            <Icon size={24} />
           </div>
           {stats && (
-            <div className="px-3 py-1 rounded-full bg-[var(--color-cyan)]/10 border border-[var(--color-cyan)]/30">
-              <span className="text-[10px] font-mono font-bold text-[var(--color-cyan)] tracking-widest">{stats}</span>
+            <div className="px-3 py-1 rounded-full bg-[#00FF88]/10 border border-[#00FF88]/20">
+              <span className="text-[10px] font-mono text-[#00FF88] tracking-widest uppercase">{stats}</span>
             </div>
           )}
         </div>
 
-        <h3 className="text-2xl md:text-3xl font-heading font-bold text-white mb-4 group-hover:text-[var(--color-cyan)] transition-colors duration-300 leading-tight">
+        <h3 className="text-2xl font-heading font-bold text-white mb-4 tracking-tight group-hover:text-[var(--color-cyan)] transition-colors duration-300">
           {title}
         </h3>
-        
-        <p className="text-[var(--color-text-secondary)] leading-relaxed text-sm md:text-base font-light mb-8 max-w-[280px]">
+        <p className="text-[var(--color-text-secondary)] font-body leading-relaxed mb-8 text-sm md:text-base">
           {desc}
         </p>
 
-        <div className="mt-auto relative h-[120px] rounded-2xl overflow-hidden bg-white/[0.02] border border-white/5">
-          <Visual />
+        <div className="mt-auto relative flex-1 min-h-[120px] flex items-center justify-center overflow-hidden">
+          {children}
         </div>
       </div>
     </motion.div>
@@ -145,99 +92,187 @@ export function WhyChooseUs() {
     offset: ["start end", "end start"]
   });
 
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-  const y = useTransform(scrollYProgress, [0, 0.2], [100, 0]);
+  const backgroundY = useSpring(useTransform(scrollYProgress, [0, 1], [0, 100]), { stiffness: 100, damping: 30 });
 
   return (
-    <section id="why-choose-us" className="py-32 md:py-48 bg-[#030305] relative overflow-hidden">
+    <section id="why-choose-us" className="py-32 bg-[#030305] relative overflow-hidden" ref={containerRef}>
       {/* 🌌 CINEMATIC BACKGROUND */}
-      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        {/* Animated Moving Grid */}
-        <motion.div 
-          style={{ 
-            backgroundImage: 'linear-gradient(rgba(0, 217, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 217, 255, 0.05) 1px, transparent 1px)',
-            backgroundSize: '100px 100px'
-          }}
-          animate={{ y: [0, 100] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-0 opacity-20"
-        />
-        
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-[var(--color-cyan)]/5 blur-[120px] rounded-full animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-[var(--color-purple)]/5 blur-[150px] rounded-full"></div>
+      <motion.div 
+        style={{ y: backgroundY }}
+        className="absolute inset-0 z-0 opacity-20 pointer-events-none"
+      >
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-[var(--color-cyan)] rounded-full blur-[120px] opacity-20 animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-[var(--color-purple)] rounded-full blur-[150px] opacity-15" />
+      </motion.div>
+
+      {/* Floating Micro-Stars */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-30">
+        {[...Array(20)].map((_, i) => (
+          <div 
+            key={i}
+            className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              opacity: Math.random() * 0.5
+            }}
+          />
+        ))}
       </div>
-
+      
       <div className="container mx-auto px-6 md:px-12 xl:px-20 max-w-[1400px] relative z-10">
-        <motion.div style={{ opacity, y }} className="mb-24 flex flex-col items-center text-center">
-          <span className="section-label mb-6">THE NEUR ADVANTAGE</span>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-heading font-black text-white leading-[1.1] mb-8 tracking-tighter">
-            Why leading <span className="text-gradient-cyan-blue">brands</span> <br/>
-            <span className="text-gradient-purple-cyan">partner</span> with us.
-          </h2>
-          <p className="section-subheading max-w-[700px] mx-auto text-base md:text-lg">
-            We merge elite product strategy with high-end technical engineering to create digital ecosystems that define industries.
-          </p>
-        </motion.div>
-
-        {/* 🧩 BENTO LAYOUT SYSTEM */}
-        <div ref={containerRef} className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 auto-rows-[minmax(400px,auto)]">
-          
-          <AdvantageCard 
-            className="md:col-span-7"
-            title="Business-First Architecture"
-            desc="We engineer systems that convert. Every line of code is written to drive ROI and facilitate massive scale."
-            icon={TrendingUp}
-            visual={ArchitectureVisual}
-            stats="+42% CONVERSION"
-            delay={0.1}
-          />
-
-          <AdvantageCard 
-            className="md:col-span-5"
-            title="Premium Standards"
-            desc="Award-winning visual aesthetics that build instant trust and define your brand's digital identity."
-            icon={Layout}
-            visual={AestheticVisual}
-            stats="ELITE UI/UX"
-            delay={0.2}
-          />
-
-          <AdvantageCard 
-            className="md:col-span-5"
-            title="Uncompromising Speed"
-            desc="Zero lag. Sub-second load times. We optimize for the highest possible Core Web Vitals and SEO rank."
-            icon={Zap}
-            visual={PerformanceVisual}
-            stats="< 0.5S LOAD"
-            delay={0.3}
-          />
-
-          <AdvantageCard 
-            className="md:col-span-7"
-            title="Direct Collaboration"
-            desc="Transparent workflows with real-time updates. We become an extension of your product team."
-            icon={Users}
-            visual={CollaborationVisual}
-            stats="24/7 SYNC"
-            delay={0.4}
-          />
-
+        <div className="max-w-4xl mb-24">
+          <motion.span 
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="section-label"
+          >
+            THE NEUR ADVANTAGE
+          </motion.span>
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-4xl md:text-6xl lg:text-7xl font-heading font-black text-white leading-[1.1] tracking-tight"
+          >
+            Why leading <span className="bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-cyan)] via-blue-400 to-[var(--color-purple)] animate-gradient-shift bg-[length:200%_auto]">brands</span> partner <span className="relative">
+              with us
+              <svg className="absolute -bottom-2 left-0 w-full h-2 text-[var(--color-cyan)]/30" viewBox="0 0 100 10" preserveAspectRatio="none">
+                <motion.path 
+                  d="M0 5 Q 25 0, 50 5 T 100 5" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2"
+                  initial={{ pathLength: 0 }}
+                  whileInView={{ pathLength: 1 }}
+                  transition={{ duration: 1.5, delay: 0.5 }}
+                />
+              </svg>
+            </span>.
+          </motion.h2>
         </div>
 
-        {/* Mini Trust Row */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 1.5, delay: 0.6 }}
-          className="mt-24 pt-12 border-t border-white/5 flex flex-wrap justify-center gap-x-16 gap-y-8 opacity-40 grayscale hover:grayscale-0 transition-all duration-700"
-        >
-          {['ENTERPRISE SCALE', 'ISO SECURITY', '99.9% UPTIME', '24/7 SUPPORT'].map((stat) => (
-            <div key={stat} className="flex items-center gap-3">
-              <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-cyan)] shadow-[0_0_10px_var(--color-cyan)]"></div>
-              <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-white font-bold">{stat}</span>
+        {/* 🧩 BENTO GRID LAYOUT */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 auto-rows-[minmax(300px,auto)]">
+          
+          {/* FEATURED: Business-First Architecture */}
+          <BentoCard 
+            title="Business-First Architecture"
+            desc="We engineer solutions that directly impact your bottom line. We bridge the gap between creative vision and technical ROI."
+            icon={TrendingUp}
+            stats="+40% CONVERSION GROWTH"
+            className="md:col-span-7 md:row-span-2"
+            delay={0.1}
+          >
+            <div className="relative w-full h-full flex items-center justify-center">
+              {/* Animated Analytics Visual */}
+              <div className="absolute inset-0 flex items-end justify-between px-4 pb-4 gap-1">
+                {[40, 25, 60, 45, 80, 55, 95, 75, 100].map((h, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ height: 0 }}
+                    whileInView={{ height: `${h}%` }}
+                    transition={{ duration: 1, delay: 0.5 + i * 0.1 }}
+                    className="flex-1 bg-gradient-to-t from-[var(--color-cyan)]/40 to-[var(--color-cyan)] rounded-t-lg shadow-[0_0_15px_rgba(0,217,255,0.3)]"
+                  />
+                ))}
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A12] via-transparent to-transparent z-10" />
             </div>
-          ))}
-        </motion.div>
+          </BentoCard>
+
+          {/* PERFORMANCE: Uncompromising Performance */}
+          <BentoCard 
+            title="Uncompromising Performance"
+            desc="Speed is revenue. Sub-second load times and SEO dominance by default."
+            icon={Zap}
+            stats="99.9% PERFORMANCE SCORE"
+            className="md:col-span-5"
+            delay={0.2}
+          >
+            <div className="relative w-full h-full flex flex-col items-center justify-center">
+              <motion.div 
+                animate={{ scale: [1, 1.05, 1], opacity: [0.5, 0.8, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="w-32 h-32 rounded-full border-2 border-dashed border-[var(--color-cyan)]/30 flex items-center justify-center"
+              >
+                <div className="text-4xl font-mono font-bold text-[var(--color-cyan)]">0.4s</div>
+              </motion.div>
+              <div className="mt-4 flex gap-2">
+                {[1, 2, 3, 4, 5].map(i => (
+                  <motion.div 
+                    key={i}
+                    animate={{ height: [8, 20, 8] }}
+                    transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+                    className="w-1 bg-[var(--color-cyan)] rounded-full"
+                  />
+                ))}
+              </div>
+            </div>
+          </BentoCard>
+
+          {/* AESTHETIC: Premium Aesthetic Standards */}
+          <BentoCard 
+            title="Aesthetic Standards"
+            desc="Award-winning visual design tailored for premium brands."
+            icon={Palette}
+            stats="PIXEL PERFECT UI"
+            className="md:col-span-5"
+            delay={0.3}
+          >
+            <div className="relative w-full h-full p-4">
+              <div className="w-full h-full rounded-xl border border-white/10 bg-white/5 relative overflow-hidden">
+                <div className="absolute top-2 left-2 w-12 h-1 bg-white/20 rounded-full" />
+                <div className="absolute top-5 left-2 w-20 h-1 bg-white/10 rounded-full" />
+                <div className="absolute inset-4 border border-dashed border-[var(--color-cyan)]/20 rounded-lg flex items-center justify-center">
+                  <div className="grid grid-cols-3 gap-2">
+                    {[...Array(6)].map((_, i) => (
+                      <div key={i} className="w-6 h-6 rounded-md bg-white/5 border border-white/10" />
+                    ))}
+                  </div>
+                </div>
+                <motion.div 
+                  animate={{ left: ["0%", "100%", "0%"] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute inset-y-0 w-[1px] bg-[var(--color-cyan)] shadow-[0_0_10px_var(--color-cyan)] z-20"
+                />
+              </div>
+            </div>
+          </BentoCard>
+
+          {/* COLLABORATION: Transparent Collaboration */}
+          <BentoCard 
+            title="Transparent Collaboration"
+            desc="Direct access to engineering teams with structured, predictable delivery."
+            icon={Users}
+            stats="ENTERPRISE READY"
+            className="md:col-span-12"
+            delay={0.4}
+          >
+            <div className="relative w-full h-32 flex items-center justify-center overflow-hidden">
+              <div className="flex gap-12 items-center relative">
+                {[Shield, Activity, Users, Shield].map((Ico, i) => (
+                  <div key={i} className="relative z-10 flex flex-col items-center gap-2">
+                    <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/50 group-hover:text-[var(--color-cyan)] transition-colors">
+                      <Ico size={18} />
+                    </div>
+                  </div>
+                ))}
+                {/* Connecting Lines */}
+                <div className="absolute top-5 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                <motion.div 
+                  animate={{ left: ["-20%", "120%"] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                  className="absolute top-[18px] w-12 h-[3px] bg-[var(--color-cyan)] blur-[2px] rounded-full" 
+                />
+              </div>
+            </div>
+          </BentoCard>
+
+        </div>
       </div>
     </section>
   );
