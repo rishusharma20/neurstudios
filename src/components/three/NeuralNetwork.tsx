@@ -89,15 +89,15 @@ const Branch = ({ points, label, endPoint, index, isHovered, onHover }: {
         <meshBasicMaterial color="#FFFFFF" transparent opacity={0.9} />
       </mesh>
 
-      <Html position={endPoint} center distanceFactor={12} zIndexRange={[20, 0]}>
+      <Html position={endPoint} center distanceFactor={12} zIndexRange={[100, 0]}>
         <motion.div 
           initial={false}
           animate={{
-            scale: isHovered ? 1.1 : 1,
-            backgroundColor: isHovered ? "rgba(0, 217, 255, 0.2)" : "rgba(10, 10, 15, 0.4)",
-            borderColor: isHovered ? "rgba(0, 217, 255, 0.8)" : "rgba(0, 217, 255, 0.15)",
+            scale: isHovered ? 1.2 : 1,
+            backgroundColor: isHovered ? "rgba(0, 217, 255, 0.2)" : "rgba(10, 10, 15, 0.6)",
+            borderColor: isHovered ? "rgba(0, 217, 255, 0.8)" : "rgba(0, 217, 255, 0.3)",
           }}
-          className="glass px-2.5 py-1 rounded-full text-[9px] sm:text-[10px] font-mono tracking-[0.15em] text-white/80 whitespace-nowrap pointer-events-auto cursor-pointer uppercase shadow-xl transition-all duration-500 border-[0.5px]"
+          className="glass px-4 py-2 rounded-lg text-[10px] sm:text-[11px] font-mono tracking-[0.2em] text-white whitespace-nowrap pointer-events-auto cursor-pointer uppercase shadow-2xl transition-all duration-500"
           onMouseEnter={() => onHover(true)}
           onMouseLeave={() => onHover(false)}
         >
@@ -152,19 +152,19 @@ const IntelligenceCore = () => {
 
   const branches = useMemo(() => {
     const services = [
-      { label: "FRONTEND", dir: [0.2, 1.2, 0.5] },      // TOP
-      { label: "BACKEND", dir: [1.2, 0.4, 0.5] },       // RIGHT
-      { label: "3D VISUALS", dir: [0.4, 1.2, 0.2] },    // TOP-RIGHT
-      { label: "UI/UX DESIGN", dir: [0.8, 1.0, -0.2] },  // TOP-RIGHT
-      { label: "API SYSTEMS", dir: [1.2, 0.8, 0.2] },    // RIGHT
-      { label: "CLOUD INFRA", dir: [1.2, -0.4, -0.3] },  // BOTTOM-RIGHT
-      { label: "FULL STACK", dir: [0.5, -1.2, -0.2] },   // BOTTOM
-      { label: "SYSTEM ARCH", dir: [0.8, -1.0, 0.3] },   // BOTTOM-RIGHT
-      { label: "DEPLOYMENT", dir: [-0.2, -1.2, 0.2] },   // BOTTOM
-      { label: "AI CORE", dir: [1.0, 0.4, -0.5] },       // RIGHT
+      { label: "FRONTEND", dir: [-1.2, 0.4, 0.5] },
+      { label: "BACKEND", dir: [1.2, 0.4, 0.5] },
+      { label: "3D VISUALS", dir: [-0.4, 1.2, 0.2] },
+      { label: "UI/UX DESIGN", dir: [0.4, 1.2, -0.2] },
+      { label: "API SYSTEMS", dir: [1, 0.8, 0.2] },
+      { label: "CLOUD INFRA", dir: [1.2, -0.4, -0.3] },
+      { label: "FULL STACK", dir: [-1.2, -0.5, -0.2] },
+      { label: "SYSTEM ARCH", dir: [0.6, -1.2, 0.3] },
+      { label: "DEPLOYMENT", dir: [-0.6, -1.2, 0.2] },
+      { label: "AI CORE", dir: [-0.8, 0.8, -0.5] },
     ];
 
-    if (isMobile) services.splice(5);
+    if (isMobile) services.splice(6);
 
     return services.map((svc, i) => {
       const points = [];
@@ -172,14 +172,14 @@ const IntelligenceCore = () => {
       let currentPos = dir.clone().multiplyScalar(1.2);
       points.push(currentPos.clone());
       
-      const length = isMobile ? 1.6 : 2.5;
+      const length = isMobile ? 1.8 : 3.0;
       const segments = 8;
       
       for (let j = 0; j < segments; j++) {
         const jitter = new THREE.Vector3(
-          Math.sin(j * 0.6 + i) * 0.2,
-          Math.cos(j * 0.5 + i) * 0.2,
-          Math.sin(j * 0.7 + i) * 0.2
+          Math.sin(j * 0.6 + i) * 0.25,
+          Math.cos(j * 0.5 + i) * 0.25,
+          Math.sin(j * 0.7 + i) * 0.25
         ).multiplyScalar(1 - j / segments);
         
         currentPos.add(dir.clone().multiplyScalar(length / segments)).add(jitter);
@@ -190,7 +190,7 @@ const IntelligenceCore = () => {
   }, [isMobile]);
 
   return (
-    <group position={isMobile ? [0, 0, 0] : [0, 0, 0]} ref={groupRef}>
+    <group position={isMobile ? [0, 0.5, 0] : [2.5, 0, 0]} ref={groupRef}>
       {/* LAYER 1: Core Plasma Orb */}
       <Sphere args={[0.9, 64, 64]} ref={innerRef}>
         <MeshDistortMaterial

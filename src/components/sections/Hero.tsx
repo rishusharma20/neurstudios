@@ -41,67 +41,64 @@ export const Hero = () => {
 
   return (
     <section id="home" className="relative w-full h-screen overflow-hidden bg-[var(--color-primary)]">
-      {/* 🌌 HERO COMPOSITION SYSTEM */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        {/* RIGHT AREA: 3D Intelligence Core (48% of screen) */}
-        <div className="absolute top-0 right-0 w-full lg:w-1/2 h-full z-10 opacity-60 lg:opacity-100">
-          <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-            <NeuralNetwork />
-          </Canvas>
-        </div>
+      {/* 3D Canvas Background (positioned on the right side mostly via CSS or scene config) */}
+      <div className="absolute inset-0 z-0 opacity-80 md:opacity-100">
+        <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
+          <NeuralNetwork />
+        </Canvas>
       </div>
 
-      {/* 💎 LEFT AREA: Editorial Typography & Content (52% of screen) */}
-      <div className="relative z-40 container mx-auto px-6 md:px-12 xl:px-20 h-full flex flex-col justify-center">
-        <div className="max-w-[100%] lg:max-w-[55%] pointer-events-auto mt-20 lg:mt-0">
-          <span className="section-label mb-6 inline-block">
+      {/* Content overlay */}
+      <div className="relative z-10 container mx-auto px-6 md:px-12 xl:px-20 h-full flex flex-col justify-center pointer-events-none">
+        <div className="max-w-3xl pointer-events-auto mt-20">
+          <span className="section-label mb-6">
             FULL-STACK CREATIVE DEVELOPMENT STUDIO
           </span>
           <h1 
             ref={headingRef}
-            className="text-4xl md:text-6xl lg:text-7xl font-heading font-black text-white leading-[1.1] mb-8"
+            className="section-heading"
           >
             Building <span className="text-gradient">intelligent</span> digital products for modern brands.
           </h1>
           
           <p 
             ref={subRef}
-            className="text-lg md:text-xl text-[var(--color-text-secondary)] mb-10 max-w-xl leading-relaxed font-light"
+            className="text-lg md:text-xl text-[var(--color-text-secondary)] mb-10 max-w-xl leading-relaxed"
           >
             We partner with startups, businesses, and creators to build premium digital experiences through modern design, full-stack development, and immersive web technologies.
           </p>
           
           <div ref={ctaRef} className="flex flex-col sm:flex-row gap-4 mb-20">
-            <Button variant="primary" href="#contact" className="px-8 py-4">START YOUR PROJECT</Button>
-            <Button variant="secondary" href="#services" className="px-8 py-4">EXPLORE SERVICES</Button>
+            <Button variant="primary" href="#contact">START YOUR PROJECT</Button>
+            <Button variant="secondary" href="#services">EXPLORE SERVICES</Button>
           </div>
 
           <div ref={statsRef} className="flex flex-wrap gap-4 md:gap-8">
             {[
               { value: "25+", label: "Projects Delivered" },
-              { value: "Full-Stack", label: "Engineering" },
+              { value: "Full-Stack", label: "Development" },
               { value: "Performance", label: "Optimized" },
             ].map((stat, i) => (
-              <div key={i} className="glass px-6 py-5 rounded-2xl flex flex-col items-start min-w-[160px] border-white/5 bg-white/[0.02]">
-                <span className="text-2xl md:text-3xl font-bold text-white font-heading">{stat.value}</span>
-                <span className="text-[10px] font-mono text-[var(--color-cyan)] mt-2 uppercase tracking-[0.2em]">{stat.label}</span>
+              <div key={i} className="glass px-6 py-4 rounded-xl flex flex-col items-start min-w-[160px]">
+                <span className="text-xl md:text-2xl font-bold text-white font-heading">{stat.value}</span>
+                <span className="text-xs text-[var(--color-cyan)] mt-1 uppercase tracking-wider">{stat.label}</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Scroll indicator (Repositioned for balance) */}
+      {/* Scroll indicator */}
       <motion.div 
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 hidden lg:flex z-50"
+        className="absolute bottom-10 right-10 flex flex-col items-center gap-4 hidden md:flex"
         animate={{ y: [0, 10, 0] }}
         transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
       >
-        <span className="text-[10px] text-white/20 uppercase tracking-[0.4em] font-mono">
+        <span className="text-xs text-[var(--color-text-muted)] uppercase tracking-widest style={{ writingMode: 'vertical-rl' }} rotate-180 font-mono">
           Scroll to explore
         </span>
-        <div className="w-[1px] h-12 bg-gradient-to-b from-[var(--color-cyan)]/50 to-transparent relative">
-          <div className="w-1 h-1 rounded-full bg-[var(--color-cyan)] absolute -left-[1.5px] top-0 shadow-[0_0_10px_var(--color-cyan)]"></div>
+        <div className="w-[1px] h-12 bg-gradient-to-b from-[var(--color-cyan)] to-transparent relative">
+          <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-cyan)] absolute -left-[2.5px] top-0 shadow-[0_0_10px_rgba(0,217,255,1)]"></div>
         </div>
       </motion.div>
     </section>
