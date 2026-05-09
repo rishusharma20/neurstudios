@@ -424,44 +424,101 @@ export const Contact = () => {
                     
                     <div className="flex flex-col items-center gap-6">
                       <Magnetic>
-                        <motion.button 
-                          onMouseEnter={() => setIsSubmitHovered(true)}
-                          onMouseLeave={() => setIsSubmitHovered(false)}
-                          whileTap={{ scale: 0.96 }}
-                          disabled={status === "sending"}
-                          className={cn(
-                            "relative w-full h-18 rounded-2xl font-black text-lg tracking-[0.2em] uppercase overflow-hidden flex items-center justify-center gap-4 transition-all duration-500",
-                            status === "error" 
-                            ? "bg-red-500/20 border-red-500/50 text-red-500" 
-                            : "bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 text-white shadow-[0_0_50px_rgba(0,217,255,0.2)]"
-                          )}
-                        >
-                          {/* Light Sweep Animation */}
+                        <div className="relative group w-full">
+                          {/* Ambient Glow Reflection Under Button */}
                           <motion.div 
-                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-20"
-                            animate={{ x: ["-150%", "150%"] }}
-                            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                            animate={{ 
+                              opacity: isSubmitHovered ? 0.6 : 0.2,
+                              scale: isSubmitHovered ? 1.1 : 1,
+                              filter: isSubmitHovered ? "blur(40px)" : "blur(20px)"
+                            }}
+                            className="absolute -inset-4 bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20 rounded-[2rem] -z-10 pointer-events-none transition-all duration-500"
                           />
 
-                          <span className="relative z-10 flex items-center gap-3">
-                            {status === "sending" ? (
-                              <>ANALYZING DATA <Loader2 className="w-5 h-5 animate-spin" /></>
-                            ) : status === "error" ? (
-                              "RETRY TRANSMISSION"
-                            ) : (
-                              <>LAUNCH YOUR VISION <ArrowRight className={cn("w-5 h-5 transition-transform", isSubmitHovered && "translate-x-2")} /></>
+                          <motion.button 
+                            onMouseEnter={() => setIsSubmitHovered(true)}
+                            onMouseLeave={() => setIsSubmitHovered(false)}
+                            whileTap={{ scale: 0.97 }}
+                            disabled={status === "sending"}
+                            className={cn(
+                              "relative w-full h-20 rounded-2xl font-black text-[13px] tracking-[0.4em] uppercase overflow-hidden flex items-center justify-center gap-4 transition-all duration-700",
+                              status === "error" 
+                              ? "bg-red-500/10 border-red-500/30 text-red-400" 
+                              : "bg-white/[0.03] backdrop-blur-2xl border border-white/10 text-white shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
                             )}
-                          </span>
-
-                          {/* Circulating Energy Border */}
-                          {isSubmitHovered && (
+                          >
+                            {/* Layered Glass Lighting & Gradient Surface */}
                             <motion.div 
-                              className="absolute inset-0 border-2 border-white/40 rounded-2xl"
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
+                              animate={{ 
+                                x: ["-20%", "20%", "-20%"],
+                                opacity: isSubmitHovered ? 0.9 : 0.6
+                              }}
+                              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                              className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-600/20 to-purple-600/10 pointer-events-none"
                             />
-                          )}
-                        </motion.button>
+                            
+                            {/* Internal Reflections & Highlights */}
+                            <div className="absolute inset-0 pointer-events-none">
+                              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                              <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                              <div className="absolute top-0 left-0 w-[1px] h-full bg-gradient-to-b from-white/10 to-transparent" />
+                              <div className="absolute top-0 right-0 w-[1px] h-full bg-gradient-to-b from-white/10 to-transparent" />
+                            </div>
+
+                            {/* Intelligent Energy Border */}
+                            <motion.div 
+                              animate={{ 
+                                opacity: isSubmitHovered ? 1 : 0.3,
+                                borderColor: isSubmitHovered ? ["rgba(34,211,238,0.5)", "rgba(123,97,255,0.5)", "rgba(34,211,238,0.5)"] : "rgba(255,255,255,0.1)"
+                              }}
+                              transition={{ duration: 3, repeat: Infinity }}
+                              className="absolute inset-0 border-2 rounded-2xl pointer-events-none"
+                            />
+
+                            {/* Cinematic Light Sweep */}
+                            <motion.div 
+                              animate={{ x: ["-200%", "200%"] }}
+                              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", repeatDelay: 1 }}
+                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[35deg] pointer-events-none"
+                            />
+
+                            <span className={cn(
+                              "relative z-10 flex items-center gap-4 transition-all duration-500",
+                              isSubmitHovered ? "drop-shadow-[0_0_10px_rgba(255,255,255,0.5)] scale-105" : "opacity-80"
+                            )}>
+                              {status === "sending" ? (
+                                <span className="flex items-center gap-3">ANALYZING_CORE <Loader2 className="w-4 h-4 animate-spin text-cyan-400" /></span>
+                              ) : status === "error" ? (
+                                "RETRY_TRANS"
+                              ) : (
+                                <>
+                                  LAUNCH YOUR VISION 
+                                  <motion.div
+                                    animate={{ 
+                                      x: isSubmitHovered ? 8 : 0,
+                                      opacity: isSubmitHovered ? 1 : 0.6
+                                    }}
+                                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                                  >
+                                    <ArrowRight className="w-5 h-5 text-cyan-400 drop-shadow-[0_0_8px_#22d3ee]" />
+                                  </motion.div>
+                                </>
+                              )}
+                            </span>
+
+                            {/* Center Energy Pulse (Visible on Click) */}
+                            <AnimatePresence>
+                              {status === "sending" && (
+                                <motion.div 
+                                  initial={{ scale: 0, opacity: 0 }}
+                                  animate={{ scale: 4, opacity: 0.4 }}
+                                  exit={{ opacity: 0 }}
+                                  className="absolute inset-0 bg-white rounded-full blur-3xl pointer-events-none"
+                                />
+                              )}
+                            </AnimatePresence>
+                          </motion.button>
+                        </div>
                       </Magnetic>
 
                       <div className="flex flex-col items-center gap-2">
